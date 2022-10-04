@@ -34,10 +34,11 @@ router.post('/login', async (req, res) => {
                     'first_name': details.first_name,
                     'last_name' : details.last_name
                 },
-                process.env.JWT_KEY,
-                {
-                    expiresIn:process.env.JWT_EXP_TIME
-                });
+                process.env.JWT_KEY);
+                // ,
+                // {
+                //     expiresIn:process.env.JWT_EXP_TIME
+                // }
 
             return res.status(200).json({
                 status:200,
@@ -50,7 +51,7 @@ router.post('/login', async (req, res) => {
                 }
             })
         }
-    }
+    } 
     catch(error){
         res.status(500).json({message: error.message, data: error})
     }
