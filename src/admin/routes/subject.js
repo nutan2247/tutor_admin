@@ -1,14 +1,14 @@
-require('dotenv').config(); //get env variables
-
 const express   = require('express'); 
 const Subject      = require('../models/subject'); 
 const mongoose  = require('mongoose'); 
 // const jwt       = require('jsonwebtoken');
-// const checkToken= require('../middleware/check-token'); 
+const checkToken= require('../middleware/check-token'); 
 const router    = express.Router(); 
 
+// require('dotenv').config(); //get env variables
+
 // **** All List **** //
-router.get('/subject/list', async (req, res) => {
+router.get('/subject/list', checkToken, async (req, res) => { 
     try{
         const result = await Subject.find(); 
         return res.status(200).json({
