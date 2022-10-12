@@ -10,7 +10,7 @@ const jwt       = require('jsonwebtoken');
 const checkToken= require('../middleware/check-token'); 
 
 // Admin Login & genrate jwt token
-router.post('/login', async (req, res) => {
+router.post('/login2', async (req, res) => {
     try{
         const details = await Admin.findOne({ email: req.body.email});
         // console.log(req.params.email);
