@@ -15,11 +15,14 @@ const adminRoutes = require('./src/admin/routes/admin');
 const bannerRoutes = require('./src/admin/routes/banner');
 const subjectRoutes = require('./src/admin/routes/subject');
 const studentRoutes = require('./src/admin/routes/student');
+const router = require('./src/users/user')
 
 app.listen(3000,()=>{
     console.log(`Welcome Admin, Server Started at ${3000}`)
 })
 
+
+app.use("/api",router)
 app.use("/api",routes)
 app.use("/admin",adminAuth)
 app.use("/admin",adminRoutes)
