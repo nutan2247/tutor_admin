@@ -1,15 +1,28 @@
-const jwt = require('jsonwebtoken');
+require('dotenv').config(); //get env variables
+const jwt = require('jsonwebtoken'); 
 
-module.exports = (req,res,next)=>{
-    try{
-        const token = req.header.authorization.splite(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_KEY); 
-        req.userData = decoded;
+module.exports = function (req, res, next) {
+  // Get token from header
+  const token = req.header('x-auth-token');
+
+  // Check if not token
+  if (!token) { 
+    return res.status(401).json({ msg: 'No token, authorization denied' });
+  }
+
+  // Verify token
+  try {
+    jwt.verify(token, process.env.JWT_KEY, (error, decoded) => {
+      if (error) {
+        return res.status(401).json({ msg: 'Token is not valid' });
+      } else {
+        req.user = decoded.user;
+        console.log(decoded.user)
         next();
-    } catch(error){
-        return res.status(401).json({
-            message:'Auth failed'
-        });
-    }
-
+      }
+    });
+  } catch (err) {
+    console.error('Something wrong with auth middleware');
+    res.status(500).json({ msg: 'Server Error' });
+  }
 };
