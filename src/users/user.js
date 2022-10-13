@@ -8,9 +8,13 @@ const router = express.Router();
 const mongoose = require('mongoose'); 
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');
-const student = require('../models/user')
-const OtpGenerate = require('../models/user')
-//const OtpVerify = require('../models/user')
+const student = require('../models/userlogin')
+const OtpGenerate = require('../models/otpgenerate')
+const OtpVerify = require('../models/otpverify')
+const subject = require('../models/subjects')
+const subStatus = require('../models/class')
+const upload = require('../models/uploadimage')
+
 
 router.post('/login', (req, res, next) => {
     User.findOne({ email: req.body.email })
@@ -157,10 +161,10 @@ router.post('/Signin', async(req,res) => {
     contact_no = req.body.contact_no
     try{
         
-        const a2 = await student.findOne({contact_no})
-        if(!a2){ return res.status(500).json({success:false, message:'Please Enter a Valid Contact No'}) }
-         res.status(200).json({success:true, a2})
-        console.log(a2)
+        const data = await student.findOne({contact_no})
+        if(!data){ return res.status(500).json({success:false, message:'Please Enter a Valid Contact No'}) }
+         res.status(200).json({success:true, data})
+        console.log(data)
         
     }catch(error) {
         res.status(500).json({error})
@@ -181,7 +185,7 @@ router.post('/otp', async(req,res) =>{
   })
   console.log(OTP)
        
-  const otp = new OtpVerify({contact_no: contact_no, otp:OTP})
+  const otp = new OtpVerify({contact_no: contact_no, otp: OTP})
   const salt = await bcrypt.genSalt(10)
   otp.otp = await bcrypt.hash(otp.otp, salt )
    
@@ -197,35 +201,92 @@ router.post('/otp', async(req,res) =>{
 
 
 //VERIFY OTP
-// router.post('/verify-Otp',async(req,res) => {
-//     const otpHolder = await OtpVerify.findOne({
-//       contact_no: req.body.contact_no,
-//       //otp:req.body.otp
+router.post('/verify-Otp',async(req,res) => {
+    const otpHolder = await OtpVerify.find({
+        contact_no : req.body.contact_no
+       // otp : req.body.otp
   
-//     })
-//     if(otpHolder.length === 0)return res.status(400).json({success:false, message:'EXPIRED OTP'})
-//     const rightthreeFind = otpHolder[otpHolder.length-1]
-//     const validUser =  bcrypt.compare(req.body.otp, rightthreeFind.otp )
-//     if(rightthreeFind.contact_no === req.body.contact_no && validUser){   
-//      const user = new OtpGenerate(_.pick(req.body,["contact_no"]))
-//      //const token = await user.generateAuthToken()
-//       //console.log(token)
-//                 const result = await user.save()
-//                 if(result.err){ return res.status(401).send({
-//                     success:false,
-//                     errors:"Your Otp Was Wrong"})
-//                     }else{ return res.status(200).json({
-//                             success:true,   
-//                             message:"Login successfully",
-//                             //token : token,
-//                              data:result 
-//                              })}
-//    }else {  return res.status(401).send({
-//     success:false,   
-//     message:"Your otp was wrong",
-//      })}
-//   })
+    })
+    if(otpHolder.length === 0)return res.status(400).json({success:false, message:'EXPIRED OTP'})
+    const rightthreeFind = otpHolder[otpHolder.length-1]
+    const validUser =  bcrypt.compareSync(req.body.otp, rightthreeFind.otp)
+    if(rightthreeFind.contact_no === req.body.contact_no && validUser){
+     const Data1 = new OtpGenerate(_.pick(req.body,["contact_no"]))
+     const token = await Data1.generatejwt()
+      console.log(token)
+                const result = await Data1.save()
+                //console.log(result)
+                if(result.err){ return res.status(400).json({
+                    success:false,
+                    errors:"Your Otp Was Wrong"})
+                    }
+                    else
+                     {res.status(200).json({
+                            success:true,   
+                            message:"Login successfully",
+                            //token : token,
+                             data:result 
+                             })}
+                             
+}    else {  return res.status(401).send({
+    success:false,   
+    message:"Your otp was wrong",
+     })}
+  })
 
+
+  //CLASS AND SUBJECT API IN ONE ROUTE
+router.get('/subjectclass', async(req,res) => {
+    try{
+        
+        const subzect = await subject.find()
+        const sub = await subStatus.find()
+        const result = {"subject":subzect, "class":sub}
+            res.status(200).json({success:true, result})
+        
+        
+    } catch(error) {
+        res.status(500).json({ succes: false ,message : error.message})
+    }
+})
+
+
+//Update personal details
+router.post('/personal', upload,async(req,res)=>{ 
+    const Details = {
+     student_name : req.body.student_name,
+     student_email : req.body.student_email,
+     father_name : req.body.father_name,
+      roll_on : req.body.roll_on,
+      date_of_admission : req.body.date_of_admission,
+      contact_no : req.body.contact_no,
+      student_photo : req.body.student_photo,
+    }
+    if(req.file){
+    Details.student_photo = req.file.path
+    }
+    try {       
+        const {student_name, student_email, contact_no} = req.body
+        if(!student_name || !student_email || !contact_no ) {
+            return res.status(400).json({error:'Please Filled The Data'})
+        }
+        const Data = await student.updateOne({contact_no},{$set:{ 
+                        student_name : req.body.student_name,
+                        student_email : req.body.student_email,
+                        father_name : req.body.father_name,
+                        roll_on : req.body.roll_on,
+                        date_of_admission : req.body.date_of_admission,
+                        student_photo : req.file.path,
+         }
+        },{new:true})
+        //console.log(Details)
+        return res.status(200).json({success:true,Data})
+    } catch(error) {
+         return res.status(500).json({success :false,error})
+
+    }
+
+})
 
 
 module.exports = router;
