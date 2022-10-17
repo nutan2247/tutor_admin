@@ -10,20 +10,13 @@ const app = express();
 
 app.use(express.json());
 
-const corsOpts = {
-    origin: '*',
-  
-    methods: [
-      'GET',
-      'POST',
-    ],
-  
-    allowedHeaders: [
-      'Content-Type',
-    ],
-  };
-  
-app.use(cors(corsOpts));
+app.use(cors({
+    'allowedHeaders': ['sessionId', 'Content-Type'],
+    'exposedHeaders': ['sessionId'],
+    'origin': '*',
+    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'preflightContinue': false
+  }));
 
 const routes = require('./src/routes/routes');
 const adminAuth = require('./src/admin/routes/auth');
