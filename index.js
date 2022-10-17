@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./config/db');
-const cors = require('cors');
+// const cors = require('cors');
 
 // Connect Database
 connectDB();
@@ -10,13 +10,13 @@ const app = express();
 
 app.use(express.json());
 
-app.use(cors({
-    'allowedHeaders': ['sessionId', 'Content-Type'],
-    'exposedHeaders': ['sessionId'],
-    'access-control-allow-origin':'*',
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    'preflightContinue': false
-  }));
+// app.use(cors({
+//     'allowedHeaders': ['sessionId', 'Content-Type'],
+//     'exposedHeaders': ['sessionId'],
+//     'access-control-allow-origin':'*',
+//     'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     'preflightContinue': false
+//   }));
 
 const routes = require('./src/routes/routes');
 const adminAuth = require('./src/admin/routes/auth');
