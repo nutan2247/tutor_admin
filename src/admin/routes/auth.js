@@ -33,7 +33,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success: false, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -44,7 +44,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials : email' }] });
+          .json({ success: false, errors: [{ msg: 'Invalid Credential : email' }] });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -52,7 +52,7 @@ router.post(
       if (!isMatch) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials : password' }] });
+          .json({ success: false, errors: [{ msg: 'Invalid Credential : password' }] });
       }
 
       const payload = {
@@ -71,6 +71,7 @@ router.post(
         (err, token) => {
           if (err) throw err;
           res.json({ 
+                success: true,
                 msg:'Admin auth sucess!',
                 token: token,
                 data: { 
