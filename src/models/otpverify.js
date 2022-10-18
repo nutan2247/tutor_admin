@@ -11,7 +11,7 @@ const VerifyOtpSchema = mongoose.Schema({
 
     },
 
-    createdAt: {type: Date, default: Date.now, index: {expires: 300} }
+    createdAt: {type: Date, default: Date.now, index: {expires: 300000} }
     
 })
 
