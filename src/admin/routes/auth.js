@@ -10,6 +10,12 @@ const { check, validationResult } = require('express-validator');
 
 const Admin     = require('../models/admin'); 
 
+var cors = require('cors')
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200
+}
+
 // @route    GET api/auth
 // @desc     Get user by token
 // @access   Private
@@ -29,11 +35,11 @@ router.get('/test', auth, async (req, res) => {
 router.post(
   '/login',
   check('email', 'Please include a valid email').isEmail(),
-  check('password', 'Password is required').exists(),
+  check('password', 'Password is required').exists(), cors(corsOptions),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ success: false, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -44,7 +50,7 @@ router.post(
       if (!user) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials : email' }] });
+          .json({ success: false, errors: [{ msg: 'Invalid Credential : email' }] });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
@@ -52,7 +58,7 @@ router.post(
       if (!isMatch) {
         return res
           .status(400)
-          .json({ errors: [{ msg: 'Invalid Credentials : password' }] });
+          .json({ success: false, errors: [{ msg: 'Invalid Credential : password' }] });
       }
 
       const payload = {
@@ -71,6 +77,7 @@ router.post(
         (err, token) => {
           if (err) throw err;
           res.json({ 
+                success: true,
                 msg:'Admin auth sucess!',
                 token: token,
                 data: { 
