@@ -10,11 +10,6 @@ const { check, validationResult } = require('express-validator');
 
 const Admin     = require('../models/admin'); 
 
-var cors = require('cors')
-var corsOptions = {
-  origin: '*',
-  optionsSuccessStatus: 200
-}
 
 // @route    GET api/auth
 // @desc     Get user by token
@@ -35,7 +30,7 @@ router.get('/test', auth, async (req, res) => {
 router.post(
   '/login',
   check('email', 'Please include a valid email').isEmail(),
-  check('password', 'Password is required').exists(), cors(corsOptions),
+  check('password', 'Password is required').exists(),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
