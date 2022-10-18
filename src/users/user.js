@@ -14,6 +14,7 @@ const OtpVerify = require('../models/otpverify')
 const subject = require('../models/subjects')
 const subStatus = require('../models/class')
 const upload = require('../models/uploadimage')
+const watchlatest = require('../models/watchlatest')
 
 
 router.post('/login', (req, res, next) => {
@@ -224,7 +225,7 @@ router.post('/verify-Otp',async(req,res) => {
                      {res.status(200).json({
                             success:true,   
                             message:"Login successfully",
-                            //token : token,
+                            token : token,
                              data:result 
                              })}
                              
@@ -288,5 +289,18 @@ router.post('/personal', upload,async(req,res)=>{
 
 })
 
+
+//Watch latest api
+router.get('/watchlatest', async(req,res) => {
+    try{
+        const Watch = await watchlatest.find()
+        res.status(200).json({success:true, Watch})
+        
+        
+} catch(error) {
+    res.status(500).json({ succes: false ,message : error.message})
+
+    }
+})
 
 module.exports = router;
