@@ -15,7 +15,8 @@ const subject = require('../models/subjects')
 const subStatus = require('../models/class')
 const upload = require('../models/uploadimage')
 const watchlatest = require('../models/watchlatest')
-
+const Notification = require("../models/Notifications")
+const checkBox = require("../models/SubjectCheckbox")
 
 router.post('/login', (req, res, next) => {
     User.findOne({ email: req.body.email })
@@ -175,23 +176,25 @@ router.post('/Signin', async(req,res) => {
 
 
 //OTP GENERATE
-router.post('/otp', async(req,res) =>{
+router.post('/login_by_otp', async(req,res) =>{
     contact_no = req.body.contact_no
   try{
   const Data = await OtpGenerate.findOne({contact_no})
   if(!Data){ res.status(400).json({success:false, message:'Please Enter a Valid Contact No'}) }
-    res.status(200).json({success:true, message:"OTP SEND SUCCESSFULLY"})
-  const OTP = otpGenerator.generate(6, {
+    
+  const AutoOTP = otpGenerator.generate(6, {
     digits : true, lowerCaseAlphabets:false, upperCaseAlphabets:false, specialChars:false
   })
-  console.log(OTP)
-       
-  const otp = new OtpVerify({contact_no: contact_no, otp: OTP})
+  const otp = new OtpVerify({contact_no: contact_no, otp: AutoOTP})
   const salt = await bcrypt.genSalt(10)
   otp.otp = await bcrypt.hash(otp.otp, salt )
    
   const result = otp.save(function(err){
-})
+    })
+  res.status(200).json({success:true, message:"OTP SEND SUCCESSFULLY " + AutoOTP})
+  console.log(AutoOTP)
+       
+ 
 
 }catch(error){
   // res.status(500).json({success:false, error})
@@ -202,7 +205,7 @@ router.post('/otp', async(req,res) =>{
 
 
 //VERIFY OTP
-router.post('/verify-Otp',async(req,res) => {
+router.post('/verify_otp',async(req,res) => {
     const otpHolder = await OtpVerify.find({
         contact_no : req.body.contact_no
        // otp : req.body.otp
@@ -226,7 +229,7 @@ router.post('/verify-Otp',async(req,res) => {
                             success:true,   
                             message:"Login successfully",
                             token : token,
-                             data:result 
+                             //data:result 
                              })}
                              
 }    else {  return res.status(401).send({
@@ -234,10 +237,29 @@ router.post('/verify-Otp',async(req,res) => {
     message:"Your otp was wrong",
      })}
   })
-
+   function check_token(req, res, next){
+    const token = req.header('Bearer');
+    if (!token) { 
+        return res.status(401).json({ msg: 'No token, authorization denied' });
+      }
+      try {
+        jwt.verify(token, process.env.JWT_KEY,(error, decoded) => {
+          if (error) {
+            return res.status(401).json({ msg: 'Token is not valid' });
+          } else {
+            req.user = decoded.user;
+            console.log(decoded.user)
+            next();
+          }
+        });
+   }catch (err) {
+    console.error('Something wrong with auth middleware');
+    res.status(500).json({ msg: 'Server Error' });
+  }
+}
 
   //CLASS AND SUBJECT API IN ONE ROUTE
-router.get('/subjectclass', async(req,res) => {
+router.get('/subjectclass',check_token, async(req,res) => {
     try{
         
         const subzect = await subject.find()
@@ -293,13 +315,50 @@ router.post('/personal', upload,async(req,res)=>{
 //Watch latest api
 router.get('/watchlatest', async(req,res) => {
     try{
-        const Watch = await watchlatest.find()
+        const Watch = await watchlatest.find({ status:0})
         res.status(200).json({success:true, Watch})
         
         
 } catch(error) {
     res.status(500).json({ succes: false ,message : error.message})
 
+    }
+})
+
+
+  //Subject api
+  router.get('/subject', async(req,res) => {
+    try{
+        
+        const subj = await subject.find({sub_status:1})
+        res.status(200).json({success:true, subj})
+        
+        
+    } catch(error) {
+        res.status(500).json({ succes: false ,message : error.message})
+    }
+})
+
+
+// Notifications api
+router.get("/Notification", async(req, res)=>{
+    try{
+  const Notify = await Notification.find()
+  res.status(200).json({success:true, Notify})
+    }catch(err){
+        res.status(401).json({success:false, message : err.message})
+    }
+})
+
+
+//subject checkbox api
+router.post("/checkbox", async(req, res) =>{
+    try{
+   const check = new checkBox(req.body)
+   const result = await check.save()
+   res.status(200).json({success: true, result})
+    }catch(err){
+        res.status(401).json({success: false, message:err.message})
     }
 })
 

@@ -1,3 +1,4 @@
+require('dotenv').config(); //get env variables
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 
@@ -10,7 +11,7 @@ const jwt = require('jsonwebtoken')
     
 })
 GenerateOtpSchema.methods.generatejwt = async function() {
-    const token = jwt.sign({_id:this._id}, "mynameisinderjeetsharmaandmyageistwentytwo")
+    const token = jwt.sign({_id:this._id}, process.env.JWT_KEY)
     //this.tokens = this.tokens.concat({ token:token})
     await this.save()
     //console.log(token)
