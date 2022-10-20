@@ -12,11 +12,15 @@ const student = require('../models/userlogin')
 const OtpGenerate = require('../models/otpgenerate')
 const OtpVerify = require('../models/otpverify')
 const subject = require('../models/subjects')
+const checktoken = require('../users/usermiddleware/verify_token')
 const subStatus = require('../models/class')
 const upload = require('../models/uploadimage')
 const watchlatest = require('../models/watchlatest')
 const Notification = require("../models/Notifications")
 const checkBox = require("../models/SubjectCheckbox")
+
+
+
 
 router.post('/login', (req, res, next) => {
     User.findOne({ email: req.body.email })
@@ -236,30 +240,11 @@ router.post('/verify_otp',async(req,res) => {
     success:false,   
     message:"Your otp was wrong",
      })}
-  })
-   function check_token(req, res, next){
-    const token = req.header('Bearer');
-    if (!token) { 
-        return res.status(401).json({ msg: 'No token, authorization denied' });
-      }
-      try {
-        jwt.verify(token, process.env.JWT_KEY,(error, decoded) => {
-          if (error) {
-            return res.status(401).json({ msg: 'Token is not valid' });
-          } else {
-            req.user = decoded.user;
-            console.log(decoded.user)
-            next();
-          }
-        });
-   }catch (err) {
-    console.error('Something wrong with auth middleware');
-    res.status(500).json({ msg: 'Server Error' });
-  }
-}
+    })
+
 
   //CLASS AND SUBJECT API IN ONE ROUTE
-router.get('/subjectclass',check_token, async(req,res) => {
+router.get('/subject_class',checktoken, async(req,res) => {
     try{
         
         const subzect = await subject.find()
@@ -275,7 +260,7 @@ router.get('/subjectclass',check_token, async(req,res) => {
 
 
 //Update personal details
-router.post('/personal', upload,async(req,res)=>{ 
+router.post('/student_update',checktoken, upload,async(req,res)=>{ 
     const Details = {
      student_name : req.body.student_name,
      student_email : req.body.student_email,
@@ -313,9 +298,9 @@ router.post('/personal', upload,async(req,res)=>{
 
 
 //Watch latest api
-router.get('/watchlatest', async(req,res) => {
+router.get('/watch_latest',checktoken, async(req,res) => {
     try{
-        const Watch = await watchlatest.find({ status:0})
+        const Watch = await watchlatest.find({ status:1})
         res.status(200).json({success:true, Watch})
         
         
@@ -327,10 +312,10 @@ router.get('/watchlatest', async(req,res) => {
 
 
   //Subject api
-  router.get('/subject', async(req,res) => {
+  router.get('/student_subject',checktoken, async(req,res) => {
     try{
         
-        const subj = await subject.find({sub_status:1})
+        const subj = await subject.find()
         res.status(200).json({success:true, subj})
         
         
@@ -341,7 +326,7 @@ router.get('/watchlatest', async(req,res) => {
 
 
 // Notifications api
-router.get("/Notification", async(req, res)=>{
+router.get("/notification",checktoken, async(req, res)=>{
     try{
   const Notify = await Notification.find()
   res.status(200).json({success:true, Notify})
@@ -352,7 +337,7 @@ router.get("/Notification", async(req, res)=>{
 
 
 //subject checkbox api
-router.post("/checkbox", async(req, res) =>{
+router.post("/subject_checkbox",checktoken, async(req, res) =>{
     try{
    const check = new checkBox(req.body)
    const result = await check.save()
@@ -362,4 +347,4 @@ router.post("/checkbox", async(req, res) =>{
     }
 })
 
-module.exports = router;
+module.exports = router
