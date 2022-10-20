@@ -74,12 +74,7 @@ router.post(
           res.json({ 
                 success: true,
                 msg:'Admin auth sucess!',
-                token: token,
-                data: { 
-                    'email': user.email,
-                    'fname': user.first_name,
-                    'lname': user.last_name
-                }
+                token: token
              });
         }
       );

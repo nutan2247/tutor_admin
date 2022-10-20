@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const classSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    admin_id: { 
+    class_id: { 
         type: Number, 
         required: true, 
         unique: true 
     },
-    admission_name: { 
+    class_name: { 
         type: String, 
         required: true
     },
@@ -16,4 +16,4 @@ const classSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('admission_for',classSchema);
+module.exports = mongoose.model('classe',classSchema);
