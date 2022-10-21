@@ -3,6 +3,7 @@ require('dotenv').config(); //get env variables
 const express   = require('express'); 
 const Admin     = require('../models/admin'); 
 const Banner    = require('../models/banner'); 
+const Notification    = require('../models/notification'); 
 const router    = express.Router(); 
 const mongoose  = require('mongoose'); 
 const bcrypt    = require('bcrypt'); 
@@ -165,6 +166,38 @@ router.get('/bannerList', async (req, res) => {
 //     })
 // });
 
+
+// ** Add Push Notification** //
+router.post('/notification/add',async (req, res) => {
+    try{
+        const data = new Notification({
+            _id: new mongoose.Types.ObjectId,
+            title: req.body.title,
+            description: req.body.description,
+            date: new Date(),
+            note_by: 'Admin'
+            })
+        data
+        .save()
+        .then(result =>{
+            // console.log(result);
+            res.status(200).json({
+                success: true,
+                message:'data stored!'
+            });
+        })
+        .catch(err =>{
+                // console.log(err);
+                res.status(500).json({
+                    success:false, 
+                    error:err
+                }); 
+            })
+    }
+    catch(error){
+        res.status(500).json({message: error.message})
+    }
+});
 
 
 module.exports = router;
