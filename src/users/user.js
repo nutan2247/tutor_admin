@@ -18,6 +18,7 @@ const upload = require('../models/uploadimage')
 const watchlatest = require('../models/watchlatest')
 const Notification = require("../models/Notifications")
 const checkBox = require("../models/SubjectCheckbox")
+const Setting = require('../models/Setting');
 
 
 
@@ -260,7 +261,7 @@ router.get('/subject_class',checktoken, async(req,res) => {
 
 
 //Update personal details
-router.post('/student_update',checktoken, upload,async(req,res)=>{ 
+router.post('/student_update',checktoken, upload, async(req,res)=>{ 
     const Details = {
      student_name : req.body.student_name,
      student_email : req.body.student_email,
@@ -286,14 +287,26 @@ router.post('/student_update',checktoken, upload,async(req,res)=>{
                         date_of_admission : req.body.date_of_admission,
                         student_photo : req.file.path,
          }
-        },{new:true})
-        //console.log(Details)
+        })
+        console.log(Details)
         return res.status(200).json({success:true,Data})
     } catch(error) {
          return res.status(500).json({success :false,error})
 
     }
 
+})
+
+
+//Student Data Get By ObjectId
+router.get('/student_objectid',checktoken,async(req,res)=>{
+    const _id = req.body.id
+    try{
+        const data = await student.findOne({_id})
+        res.status(200).json({success:true, data})
+    }catch(err){
+        res.status(401).json({success:false, message:'Please enter a valid ID'})
+    }
 })
 
 
@@ -344,6 +357,29 @@ router.post("/subject_checkbox",checktoken, async(req, res) =>{
    res.status(200).json({success: true, result})
     }catch(err){
         res.status(401).json({success: false, message:err.message})
+    }
+})
+  
+
+//contact us api
+router.get("/contact_us", async(req, res)=>{
+    try {
+    const sett = await Setting.find()
+    return res.status(200).json({success : true, sett})
+    }catch(err){
+        return res.status(401).json({success : false, message:err.message})
+    }
+})
+
+
+//
+router.get("/", async(req,res)=>{
+    const sub_name = req.body.sub_name
+    try{
+        const subb = await subject.find({sub_name})
+        return res.status(200).json({success: true, subb})
+    }catch(err){
+        return res.status(400).json({success:false, message:err.message})
     }
 })
 
