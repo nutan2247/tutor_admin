@@ -1,5 +1,5 @@
 const mongoose = require("mongoose")
-const settingSchema = mongoose.Schema({
+const contactSchema = mongoose.Schema({
     contact_no:{
         type : String,
         required : true
@@ -13,4 +13,4 @@ const settingSchema = mongoose.Schema({
         required : true
     }
 })
-module.exports = mongoose.model("settings", settingSchema)
+module.exports = mongoose.model("settings", contactSchema)

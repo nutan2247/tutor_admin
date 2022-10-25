@@ -18,7 +18,8 @@ const upload = require('../models/uploadimage')
 const watchlatest = require('../models/watchlatest')
 const Notification = require("../models/Notifications")
 const checkBox = require("../models/SubjectCheckbox")
-const Setting = require('../models/Setting');
+const Setting = require('../models/contact_us');
+const admission = require("../models/chapter")
 
 
 
@@ -300,10 +301,10 @@ router.post('/student_update',checktoken, upload, async(req,res)=>{
 
 //Student Data Get By ObjectId
 router.get('/student_objectid',checktoken,async(req,res)=>{
-    const _id = req.body.id
+    const _id = req.body._id
     try{
-        const data = await student.findOne({_id})
-        res.status(200).json({success:true, data})
+        const stu = await student.find({_id})
+        res.status(200).json({success:true, stu})
     }catch(err){
         res.status(401).json({success:false, message:'Please enter a valid ID'})
     }
@@ -362,7 +363,7 @@ router.post("/subject_checkbox",checktoken, async(req, res) =>{
   
 
 //contact us api
-router.get("/contact_us", async(req, res)=>{
+router.get("/contact_us",checktoken, async(req, res)=>{
     try {
     const sett = await Setting.find()
     return res.status(200).json({success : true, sett})
@@ -372,12 +373,12 @@ router.get("/contact_us", async(req, res)=>{
 })
 
 
-//
-router.get("/", async(req,res)=>{
-    const sub_name = req.body.sub_name
+//chapter get api
+router.get("/chapter",checktoken, async(req,res)=>{
+    const admission_id = req.body.admission_id
     try{
-        const subb = await subject.find({sub_name})
-        return res.status(200).json({success: true, subb})
+        const Data = await admission.find({admission_id})
+        return res.status(200).json({success: true, Data})
     }catch(err){
         return res.status(400).json({success:false, message:err.message})
     }
