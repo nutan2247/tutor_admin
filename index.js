@@ -26,6 +26,8 @@ const adminRoutes = require('./src/admin/routes/admin');
 const bannerRoutes = require('./src/admin/routes/banner');
 const subjectRoutes = require('./src/admin/routes/subject');
 const studentRoutes = require('./src/admin/routes/student');
+const quizRoutes = require("./src/admin/routes/quiz")
+const questionRouter = require("./src/admin/routes/questionSet")
 const router = require('./src/users/user');
 //const tutor = require('./src/users/login')
 
@@ -41,3 +43,5 @@ app.use("/admin",adminRoutes)
 app.use("/admin",bannerRoutes)
 app.use("/admin",subjectRoutes)
 app.use("/admin",studentRoutes)
+app.use("/admin",quizRoutes)
+app.use("/admin",questionRouter)
