@@ -222,26 +222,33 @@ router.post('/verify_otp',async(req,res) => {
     const validUser =  bcrypt.compareSync(req.body.otp, rightthreeFind.otp)
     if(rightthreeFind.contact_no === req.body.contact_no && validUser){
      const Data1 = new OtpGenerate(_.pick(req.body,["contact_no"]))
-     const token = await Data1.generatejwt()
-      console.log(token)
-                const result = await Data1.save()
-                //console.log(result)
-                if(result.err){ return res.status(400).json({
-                    success:false,
-                    errors:"Your Otp Was Wrong"})
-                    }
-                    else
-                     {res.status(200).json({
-                            success:true,   
-                            message:"Login successfully",
-                            token : token,
-                             //data:result 
-                             })}
+     const user = await student.findOne({contact_no})
+
+     const payload = {
+        user: {
+          _id: user._id,
+          contact_no: user.contact_no,
+        
+        }
+      };
+      
+    //   console.log(payload);
+      jwt.sign(payload,process.env.JWT_KEY,{ expiresIn: '24h' },
+        (err, token) => {
+          if (err) throw err;
+          res.status(200).json({ 
+                success:true,   
+                message:"Login successfully",
+                token : token,
+             });
+        }
+      );
                              
-}    else {  return res.status(401).send({
-    success:false,   
-    message:"Your otp was wrong",
-     })}
+    } else {  return res.status(401).send({
+        success:false,   
+        message:"Your otp was wrong",
+        })
+    }
     })
 
 
@@ -302,6 +309,7 @@ router.post('/student_update',checktoken, upload, async(req,res)=>{
 //Student Data Get By ObjectId
 router.get('/student_objectid',checktoken,async(req,res)=>{
     const _id = req.body._id
+    //const contact_no = req.body.contact_no
     try{
         const stu = await student.find({_id})
         res.status(200).json({success:true, stu})
