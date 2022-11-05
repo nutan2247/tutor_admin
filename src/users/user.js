@@ -20,6 +20,9 @@ const Notification = require("../models/Notifications")
 const checkBox = require("../models/SubjectCheckbox")
 const Setting = require('../models/contact_us');
 const admission = require("../models/chapter")
+const Question = require('../admin/models/questionSetPaper')
+const QuestionList = require('../models/question')
+
 
 
 
@@ -392,4 +395,36 @@ router.get("/chapter",checktoken, async(req,res)=>{
     }
 })
 
+
+//Connect Two Collections
+router.get("/quiz",checktoken, async(req,res)=>{
+    try {
+        const quiz =await Question.aggregate([{$match:{"admin_id":5}},
+            {
+                $lookup:
+                  {from:"admission_fors",
+                    localField:"admin_id",
+                    foreignField:"admin_id",
+                    as:"result"
+                }}
+        ])
+ return res.status(200).json({success:true, quiz})
+    }catch(error){
+        return res.status(401).json({success:false, message:error.message})
+    }
+})
+
+
+//All Questions Get
+router.get("/quiz/question",async(req, res)=>{
+    try{
+        const List = await QuestionList.find()
+        return res.status(200).json({success:true, List})
+    }catch(error){
+        return res.status(400).json({success:false, message:error.message})
+    }
+})
+
 module.exports = router
+
+

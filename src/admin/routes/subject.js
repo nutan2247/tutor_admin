@@ -13,14 +13,14 @@ router.get('/chapter/list', checkToken, async (req, res) => {
     try{
         const result = await Chapter.find(); 
         return res.status(200).json({
-            status:200,
+            success:true,
             count: result.length,
             msg:'Chapter List',
             data: result
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
@@ -59,7 +59,7 @@ router.post('/chapter/add',checkToken, async (req, res) => {
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
@@ -93,14 +93,14 @@ router.get('/subject/list', checkToken, async (req, res) => {
     try{
         const result = await Subject.find(); 
         return res.status(200).json({
-            status:200,
+            success:true,
             count: result.length,
             msg:'Subject List',
             data: result
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
@@ -133,7 +133,7 @@ router.post('/subject/add',checkToken, async (req, res) => {
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
