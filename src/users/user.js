@@ -415,8 +415,8 @@ router.get("/quiz",checktoken, async(req,res)=>{
 })
 
 
-//All Questions Get
-router.get("/quiz/question",async(req, res)=>{
+//All Quiz Questions Get
+router.get("/quiz/question",checktoken,async(req, res)=>{
     try{
         const List = await QuestionList.find()
         return res.status(200).json({success:true, List})
