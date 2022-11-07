@@ -22,7 +22,7 @@ const Setting = require('../models/contact_us');
 const admission = require("../models/chapter")
 const Question = require('../admin/models/questionSetPaper')
 const QuestionList = require('../models/question');
-const { ideahub } = require('googleapis/build/src/apis/ideahub');
+//const { ideahub } = require('googleapis/build/src/apis/ideahub');
 
 
 
@@ -283,28 +283,29 @@ router.post('/student_update',checktoken, upload, async(req,res)=>{
         father_name : req.body.father_name,
         roll_on : req.body.roll_on,
         date_of_admission : req.body.date_of_admission,
-        //   contact_no : req.body.contact_no,
+          // contact_no : req.body.contact_no,
           student_photo : req.body.student_photo,
     }
     if(req.file){
         Details.student_photo = req.file.path
     }
-    Data123 = await student.findById({_id:id});
-    console.log(Data123)
+    // Data123 = await student.findById({_id:id});
+    // console.log(Data123)
     try {       
-        const Data = await student.findByIdAndUpdate({_id:id},{$set:{ 
+        const {student_name, student_email, contact_no} = req.body
+        if(!student_name || !student_email ) {
+            return res.status(400).json({error:'Please Filled The Data'})
+        }
+        const Data = await student.updateOne({_id:id},{$set:{ 
                         student_name : req.body.student_name,
-                        student_email : req.body.student_email,
-                        father_name : req.body.father_name,
-                        roll_on : req.body.roll_on,
+                         student_email : req.body.student_email,
+                         father_name : req.body.father_name,
+                         roll_on : req.body.roll_on,
                          date_of_admission : req.body.date_of_admission,
-                        // student_photo : req.file.path,
+                        student_photo : req.file.path,
          },
         })
-        // const {student_name, student_email, contact_no} = req.body
-        // if(!student_name || !student_email || !contact_no ) {
-        //     return res.status(400).json({error:'Please Filled The Data'})
-        // }
+       
         console.log(Details)
         return res.status(200).json({success:true,Data})
     } catch(error) {
@@ -320,7 +321,7 @@ router.post('/student_objectid',checktoken,async(req,res)=>{
     const _id = req.body._id
     //const contact_no = req.body.contact_no
     try{
-        const stu = await student.find({_id})
+        const stu = await student.find({_id}).select("-student_password")
         res.status(200).json({success:true, stu})
     }catch(err){
         res.status(401).json({success:false, message:'Please enter a valid ID'})
