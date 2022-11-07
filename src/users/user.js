@@ -294,10 +294,10 @@ router.post('/student_update',checktoken, upload, async(req,res)=>{
     try {       
         const Data = await student.findByIdAndUpdate({_id:id},{$set:{ 
                         student_name : req.body.student_name,
-                        // student_email : req.body.student_email,
-                        // father_name : req.body.father_name,
-                        // roll_on : req.body.roll_on,
-                        // date_of_admission : req.body.date_of_admission,
+                        student_email : req.body.student_email,
+                        father_name : req.body.father_name,
+                        roll_on : req.body.roll_on,
+                         date_of_admission : req.body.date_of_admission,
                         // student_photo : req.file.path,
          },
         })
