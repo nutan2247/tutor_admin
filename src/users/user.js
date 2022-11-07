@@ -21,7 +21,8 @@ const checkBox = require("../models/SubjectCheckbox")
 const Setting = require('../models/contact_us');
 const admission = require("../models/chapter")
 const Question = require('../admin/models/questionSetPaper')
-const QuestionList = require('../models/question')
+const QuestionList = require('../models/question');
+const { ideahub } = require('googleapis/build/src/apis/ideahub');
 
 
 
@@ -272,33 +273,38 @@ router.get('/subject_class',checktoken, async(req,res) => {
 
 
 //Update personal details
-router.post('/student_update',checktoken, upload, async(req,res)=>{ 
+router.post('/student_update',checktoken, upload, async(req,res)=>{
+    
+    const id = req.body._id;
+
     const Details = {
-     student_name : req.body.student_name,
-     student_email : req.body.student_email,
-     father_name : req.body.father_name,
-      roll_on : req.body.roll_on,
-      date_of_admission : req.body.date_of_admission,
-      contact_no : req.body.contact_no,
-      student_photo : req.body.student_photo,
+        student_name : req.body.student_name,
+        student_email : req.body.student_email,
+        father_name : req.body.father_name,
+        roll_on : req.body.roll_on,
+        date_of_admission : req.body.date_of_admission,
+        //   contact_no : req.body.contact_no,
+          student_photo : req.body.student_photo,
     }
     if(req.file){
-    Details.student_photo = req.file.path
+        Details.student_photo = req.file.path
     }
+    Data123 = await student.findById({_id:id});
+    console.log(Data123)
     try {       
-        const {student_name, student_email, contact_no} = req.body
-        if(!student_name || !student_email || !contact_no ) {
-            return res.status(400).json({error:'Please Filled The Data'})
-        }
-        const Data = await student.updateOne({contact_no},{$set:{ 
+        const Data = await student.findByIdAndUpdate({_id:id},{$set:{ 
                         student_name : req.body.student_name,
-                        student_email : req.body.student_email,
-                        father_name : req.body.father_name,
-                        roll_on : req.body.roll_on,
-                        date_of_admission : req.body.date_of_admission,
-                        student_photo : req.file.path,
-         }
+                        // student_email : req.body.student_email,
+                        // father_name : req.body.father_name,
+                        // roll_on : req.body.roll_on,
+                        // date_of_admission : req.body.date_of_admission,
+                        // student_photo : req.file.path,
+         },
         })
+        // const {student_name, student_email, contact_no} = req.body
+        // if(!student_name || !student_email || !contact_no ) {
+        //     return res.status(400).json({error:'Please Filled The Data'})
+        // }
         console.log(Details)
         return res.status(200).json({success:true,Data})
     } catch(error) {
@@ -428,23 +434,25 @@ router.get("/quiz/question",checktoken,async(req, res)=>{
 
 
 //Question Get by Admin id and Subject
-router.get("/quiz/question/list",checktoken, async(req,res)=>{
-    const admin_id = req.body.admin_id
+router.post("/quiz/question/list",checktoken, async(req,res)=>{
+    const _id = req.body._id
     try {
-        const ques =await Question.aggregate([{$match:{admin_id}},
+        const ques =await Question.aggregate([{$match:{_id}},
             {
                 $lookup:
                   {from:"questions",
-                    localField:"admin_id",
-                    foreignField:"admin_id",
+                    localField:"_id",
+                    foreignField:"question_set",
                     as:"result"
-                }},{$project:{"qps_title":0}}
+                }},
         ])
  return res.status(200).json({success:true, ques})
     }catch(error){
         return res.status(401).json({success:false, message:error.message})
     }
 })
+
+// ,{$project:{"qps_id":0,"chapter_name":0,"qps_title":0,"qps_time":0,"qps_mark":0,"qps_negative_mark":0,"no_of_ques":0,"qps_language":0,"ques_ids":0,"qps_date":0,"solution_video":0,"solution_pdf":0,"__v":0,"qp_status":0}}
 
 
 module.exports = router
