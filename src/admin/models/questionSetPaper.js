@@ -12,6 +12,10 @@ const questionSetSchema = mongoose.Schema({
         type: Number,
         //required: true
     } ,
+    subject:{
+        type: String,
+        //required: true
+    } ,
     qps_title:{
         type: String,
         //required: true

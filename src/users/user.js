@@ -310,7 +310,7 @@ router.post('/student_update',checktoken, upload, async(req,res)=>{
 
 
 //Student Data Get By ObjectId
-router.get('/student_objectid',checktoken,async(req,res)=>{
+router.post('/student_objectid',checktoken,async(req,res)=>{
     const _id = req.body._id
     //const contact_no = req.body.contact_no
     try{
@@ -398,15 +398,16 @@ router.get("/chapter",checktoken, async(req,res)=>{
 
 //Connect Two Collections
 router.get("/quiz",checktoken, async(req,res)=>{
+    const admin_id = req.body.admin_id
     try {
-        const quiz =await Question.aggregate([{$match:{"admin_id":5}},
+        const quiz =await Question.aggregate([{$match:{admin_id}},
             {
                 $lookup:
                   {from:"admission_fors",
                     localField:"admin_id",
                     foreignField:"admin_id",
                     as:"result"
-                }}
+                }},
         ])
  return res.status(200).json({success:true, quiz})
     }catch(error){
@@ -415,8 +416,8 @@ router.get("/quiz",checktoken, async(req,res)=>{
 })
 
 
-//All Questions Get
-router.get("/quiz/question",async(req, res)=>{
+//All Quiz Questions Get
+router.get("/quiz/question",checktoken,async(req, res)=>{
     try{
         const List = await QuestionList.find()
         return res.status(200).json({success:true, List})
@@ -424,6 +425,27 @@ router.get("/quiz/question",async(req, res)=>{
         return res.status(400).json({success:false, message:error.message})
     }
 })
+
+
+//Question Get by Admin id and Subject
+router.get("/quiz/question/list",checktoken, async(req,res)=>{
+    const admin_id = req.body.admin_id
+    try {
+        const ques =await Question.aggregate([{$match:{admin_id}},
+            {
+                $lookup:
+                  {from:"questions",
+                    localField:"admin_id",
+                    foreignField:"admin_id",
+                    as:"result"
+                }},{$project:{"qps_title":0}}
+        ])
+ return res.status(200).json({success:true, ques})
+    }catch(error){
+        return res.status(401).json({success:false, message:error.message})
+    }
+})
+
 
 module.exports = router
 

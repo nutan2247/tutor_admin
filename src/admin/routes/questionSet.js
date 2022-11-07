@@ -30,6 +30,7 @@ router.post('/questionSet/add',checkToken, async (req, res) => {
             qps_id: req.body.qps_id,
             chapter_name: req.body.chapter_name,
             admin_id: req.body.admin_id,
+            subject:req.body.subject,
             qps_title: req.body.qps_title,
             qps_time: req.body.qps_time,
             qps_mark: req.body.qps_mark,
