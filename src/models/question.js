@@ -4,10 +4,6 @@ const QuestionListSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    // Options:{
-    //     type:Array,
-    //     required:true
-    // },
     explations:{
         type:String,
         required:true
