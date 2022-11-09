@@ -4,6 +4,10 @@ const QuestionListSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    setid:{
+        type:mongoose.Schema.Types.ObjectId,
+        //required:true
+    }, 
     explations:{
         type:String,
         required:true

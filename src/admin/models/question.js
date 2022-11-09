@@ -1,9 +1,6 @@
 const mongoose = require("mongoose")
 const quizSchema = mongoose.Schema({
-    set_id:{
-        type:Number,
-        //required:true
-    }, 
+   
     subject_id:{
         type:Number,
         //required:true

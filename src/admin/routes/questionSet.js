@@ -10,6 +10,7 @@ router.get('/questionSet/list',checkToken, async (req, res) => {
     try{
         const result = await questionSet.find(); 
         return res.status(200).json({
+            success:true,
             status:200,
             count: result.length,
             msg:'questionSet List',
@@ -17,7 +18,7 @@ router.get('/questionSet/list',checkToken, async (req, res) => {
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false, message: error.message})
     }
 });
 
@@ -27,21 +28,22 @@ router.post('/questionSet/add',checkToken, async (req, res) => {
     try{
         const data = new questionSet({
             //_id: new mongoose.Types.ObjectId,
-            qps_id: req.body.qps_id,
+            //qps_id: req.body.qps_id,
             chapter_name: req.body.chapter_name,
             admin_id: req.body.admin_id,
             subject:req.body.subject,
             qps_title: req.body.qps_title,
             qps_time: req.body.qps_time,
             qps_mark: req.body.qps_mark,
-            qps_negative_mark: req.body.qps_negative_mark,
+            //qps_negative_mark: req.body.qps_negative_mark,
             no_of_ques: req.body.no_of_ques,
             qps_language: req.body.qps_language,
-            ques_ids: req.body.ques_ids                ,
+            //ques_ids: req.body.ques_ids                ,
             qps_date: req.body.qps_date,
             solution_video:req.body.solution_video,
             solution_pdf:req.body.solution_pdf,
             qps_status:req.body.qps_status,
+            addedat:new Date()
             })
         data
         .save()
@@ -59,7 +61,7 @@ router.post('/questionSet/add',checkToken, async (req, res) => {
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false, message: error.message})
     }
 });
 

@@ -1,0 +1,3 @@
+
+
+INDERJEET DATABASE = #DATABASE_URL ="mongodb+srv://user:user@cluster0.twzottr.mongodb.net/Tutor1?retryWrites=true&w=majority"
