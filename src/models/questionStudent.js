@@ -1,9 +1,6 @@
 const mongoose = require("mongoose")
 const questionSetSchema = mongoose.Schema({
-    // qps_id:{
-    //     type: Number,
-    //     //required: true
-    // },
+    
     chapter_name:{
         type: String,
         //required: true
@@ -60,6 +57,8 @@ const questionSetSchema = mongoose.Schema({
         type: Number,
         //required: true
     },
+   
+    
     
 })
-module.exports = mongoose.model("QuestionSet", questionSetSchema)
+module.exports = mongoose.model("questionSetPaper", questionSetSchema)

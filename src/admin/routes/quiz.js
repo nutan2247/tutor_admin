@@ -10,6 +10,7 @@ router.get('/quiz/list',async (req, res) => {
     try{
         const result = await question.find(); 
         return res.status(200).json({
+            success:true,
             status:200,
             count: result.length,
             msg:'quiz List',
@@ -17,7 +18,7 @@ router.get('/quiz/list',async (req, res) => {
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false, message: error.message})
     }
 });
 
@@ -58,7 +59,7 @@ router.post('/quiz/add',async (req, res) => {
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false, message: error.message})
     }
 });
 
