@@ -11,9 +11,9 @@ const jwt = require('jsonwebtoken');
 const student = require('../models/userlogin')
 const OtpGenerate = require('../models/otpgenerate')
 const OtpVerify = require('../models/otpverify')
-const subject = require('../models/subjects')
+const subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
-const subStatus = require('../models/class')
+const subStatus = require('../admin/models/class')
 const upload = require('../models/uploadimage')
 const watchlatest = require('../models/watchlatest')
 const Notification = require("../models/Notifications")
@@ -483,8 +483,22 @@ router.post('/student/class', checktoken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
 
-        const clas = await subStatus.find({admin_id})
-        res.status(200).json({ success: true, clas })
+        const classe = await subStatus.find({admin_id})
+        res.status(200).json({ success: true, classe })
+
+
+    } catch (error) {
+        res.status(500).json({ succes: false, message: error.message })
+    }
+})
+
+
+router.post('/student/subject', checktoken, async (req, res) => {
+    const admin_id = req.body.admin_id
+    try {
+
+        const subjec = await subject.find({admin_id})
+        res.status(200).json({ success: true, subjec })
 
 
     } catch (error) {

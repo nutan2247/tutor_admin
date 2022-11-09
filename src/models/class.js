@@ -5,10 +5,7 @@ const ClassSchema = mongoose.Schema({
       type: Number,
       required:true
     },
-    admin_id:{
-      type:Number,
-      unique:true
-    },
+    
     class_Name:{
       type:String,
       required:true
