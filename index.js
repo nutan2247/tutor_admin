@@ -28,6 +28,9 @@ const subjectRoutes = require('./src/admin/routes/subject');
 const studentRoutes = require('./src/admin/routes/student');
 const quizRoutes = require("./src/admin/routes/quiz")
 const questionRouter = require("./src/admin/routes/questionSet")
+const batchRouter = require("./src/admin/routes/batches")
+const topicRouter = require("./src/admin/routes/topic")
+const sampleRouter = require("./src/admin/routes/samplePaper")
 const router = require('./src/users/user');
 //const tutor = require('./src/users/login')
 
@@ -45,3 +48,6 @@ app.use("/admin",subjectRoutes)
 app.use("/admin",studentRoutes)
 app.use("/admin",quizRoutes)
 app.use("/admin",questionRouter)
+app.use("/admin",batchRouter)
+app.use("/admin",topicRouter)
+app.use("/admin",sampleRouter)
