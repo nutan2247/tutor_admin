@@ -498,8 +498,14 @@ router.post('/student/subject', checktoken, async (req, res) => {
     try {
 
         const subjec = await subject.find({admin_id})
-        res.status(200).json({ success: true, subjec })
-
+        //res.status(200).json({ success: true, subjec })
+        const subb = await subject.find()
+        //return res.status(200).json({success:true, subb})
+        if(!admin_id){
+            return res.status(200).json({ success: true, subb })
+        }  
+         return res.status(200).json({success:true, subjec})
+        
 
     } catch (error) {
         res.status(500).json({ succes: false, message: error.message })

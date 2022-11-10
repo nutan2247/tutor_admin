@@ -38,7 +38,7 @@ router.post('/questionSet/add',checkToken, async (req, res) => {
             //qps_negative_mark: req.body.qps_negative_mark,
             no_of_ques: req.body.no_of_ques,
             qps_language: req.body.qps_language,
-            //ques_ids: req.body.ques_ids                ,
+            //ques_ids: req.body.ques_ids,
             qps_date: req.body.qps_date,
             solution_video:req.body.solution_video,
             solution_pdf:req.body.solution_pdf,
