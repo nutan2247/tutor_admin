@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const classSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    class_id: { 
+    admin_id: { 
         type: Number, 
         required: true, 
         unique: true 

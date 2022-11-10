@@ -57,7 +57,7 @@ const questionSetSchema = mongoose.Schema({
         //required: true
     } ,
     qps_status:{
-        type: Number,
+        type:String,
         //required: true
     },
     
