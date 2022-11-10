@@ -483,7 +483,7 @@ router.post('/student/class', checktoken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
 
-        const classe = await subStatus.find({admin_id})
+        const classe = await subStatus.find({ admin_id })
         res.status(200).json({ success: true, classe })
 
 
@@ -496,16 +496,19 @@ router.post('/student/class', checktoken, async (req, res) => {
 router.post('/student/subject', checktoken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
-
-        const subjec = await subject.find({admin_id})
-        //res.status(200).json({ success: true, subjec })
-        const subb = await subject.find()
-        //return res.status(200).json({success:true, subb})
-        if(!admin_id){
-            return res.status(200).json({ success: true, subb })
-        }  
-         return res.status(200).json({success:true, subjec})
-        
+        let subjec = "no data found";
+        let status = false;
+        let msg = "empty";
+        if (!admin_id) {
+            subjec = await subject.find()
+            status = true;
+            msg = "All class subject";
+        } else {
+            subjec = await subject.find({ admin_id })
+            status = true;
+            msg = "one class subject";
+        }
+        return res.status(200).json({ success: status, msg : msg, subjec })
 
     } catch (error) {
         res.status(500).json({ succes: false, message: error.message })

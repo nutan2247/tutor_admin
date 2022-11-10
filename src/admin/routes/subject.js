@@ -111,6 +111,8 @@ router.post('/subject/add',checkToken, async (req, res) => {
         const data = new Subject({
             _id: new mongoose.Types.ObjectId,
             sub_id: req.body.sub_id,
+            admin_id: req.body.admin_id,
+            subject_name: req.body.subject_name,
             sub_name: req.body.sub_name,
             department_id: req.body.department_id,
             sub_status: req.body.sub_status,
@@ -128,7 +130,7 @@ router.post('/subject/add',checkToken, async (req, res) => {
         .catch(err =>{
                 console.log(err);
                 res.status(500).json({
-                    success:fasle, error:err
+                    success:false, error:err
                 }); 
             })
     }
