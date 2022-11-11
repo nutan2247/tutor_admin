@@ -1,19 +1,14 @@
 const mongoose = require('mongoose');
 const topicSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
-    chap_id: { type: Number, required: false },
-    student_board : { type: String, required: true },
-    chapter_title : { type: String, required: true },
-    class_id : { type: Number, required: true },
-    subject_id : { type: Number, required: true },
-    topic_id : { type: Number, required: true },
-    chapter_description : { type: String, required: true },
-    chapter_document : { type: String, required: false },
-    chapter_video : { type: String, required: false },
-    language_id : { type: String, required: true },
-    chapter_status : { type: Number, required: true },
+    chapter_title: { type: String, required: false },
+    admin_id: { type: Number, required: false },
+    subject: { type: String, required: false },
+    language: { type: String, required: false },
+    total_topics: { type: Number, required: false },
+    status: { type: String, required: false },
     added_at: { type: Date, required: false },
     updated_at: { type: Date, required: false },
 });
 //This is pending for now.
-module.exports = mongoose.model('chapters',topicSchema);
+module.exports = mongoose.model('chapters', topicSchema);
