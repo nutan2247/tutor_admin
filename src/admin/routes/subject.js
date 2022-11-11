@@ -5,6 +5,7 @@ const Department= require('../models/department');
 const Chapter= require('../models/chapter'); 
 const mongoose  = require('mongoose'); 
 const checkToken= require('../middleware/check-token'); 
+//const chapter = require('../models/chapter');
 const router    = express.Router(); 
 
 
@@ -60,9 +61,9 @@ router.post('/chapter/add',checkToken, async (req, res) => {
 
 
 //Chapter Edit
-router.patch('/chapter/update/:_id', checkToken,(req, res, next)=>{
+router.patch('/chapter/update/:_id', checkToken,(req, res)=>{
 
-    Subject.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
+    Chapter.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
     if (err) {
         return res.status(500).send({success: false, error: "Problem with Updating the recored "})
     };
@@ -105,7 +106,7 @@ router.post('/subject/add',checkToken, async (req, res) => {
     try{
         const data = new Subject({
             //_id: new mongoose.Types.ObjectId,
-            subid: req.body.sub_id,
+            //sub_id: req.body.sub_id,
             admin_id: req.body.admin_id,
             subject_name: req.body.subject_name,
             sub_name: req.body.sub_name,
