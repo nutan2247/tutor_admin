@@ -16,4 +16,4 @@ const topicSchema = mongoose.Schema({
     updated_at: { type: Date, required: false },
 });
 //This is pending for now.
-module.exports = mongoose.model('topics',topicSchema);
+module.exports = mongoose.model('chapters',topicSchema);

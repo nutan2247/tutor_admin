@@ -53,7 +53,7 @@ router.post('/chapter/add',checkToken, async (req, res) => {
         })
         .catch(err =>{
                 res.status(500).json({
-                    success:fasle,
+                    success:false,
                     error:err
                 }); 
             })
@@ -109,7 +109,7 @@ router.get('/subject/list', checkToken, async (req, res) => {
 router.post('/subject/add',checkToken, async (req, res) => {
     try{
         const data = new Subject({
-            _id: new mongoose.Types.ObjectId,
+            //_id: new mongoose.Types.ObjectId,
             sub_id: req.body.sub_id,
             admin_id: req.body.admin_id,
             subject_name: req.body.subject_name,
