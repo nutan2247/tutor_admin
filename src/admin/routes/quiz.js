@@ -28,19 +28,9 @@ router.post('/quiz/add',async (req, res) => {
     try{
         const data = new question({
             //_id: new mongoose.Types.ObjectId,
-            set_id: req.body.set_id,
-            subject_id: req.body.subject_id,
-            admin_id: req.body.admin_id,
-            qp_title: req.body.qp_title,
-            qp_image: req.body.qp_image,
-            qp_ans_value: req.body.qp_ans_value,
-            qp_type: req.body.qp_type,
-            qp_option1: req.body.qp_option1,
-            qp_option2: req.body.qp_option2,
-            qp_option3: req.body.qp_option3,
-            qp_option4: req.body.qp_option4,
-            qp_text:req.body.qp_text,
-            qp_status:req.body.qp_status,
+            set:req.body.set,
+            question:req.body.question,
+            options:req.body.options,
             add_date: new Date()
             })
         data
