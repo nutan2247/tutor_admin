@@ -25,6 +25,9 @@ router.get('/sample/list', checkToken, async (req, res) => {
 
 // ** Add Sample Paper** //
 router.post('/sample/add', checkToken, upload, async (req, res) => {
+    if (req.file) {
+        upload_document = req.file.path
+    }
     try {
         const data = new Sample({
             title:req.body.title,
@@ -32,7 +35,7 @@ router.post('/sample/add', checkToken, upload, async (req, res) => {
             exam_seating:req.body.exam_seating,
             starting_time:req.body.starting_time,
             time_duration:req.body.time_duration,
-            upload_document:req.body.upload_document,
+            upload_document:req.file.path,
             addedat: new Date()
         })
         data
