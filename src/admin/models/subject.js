@@ -1,11 +1,21 @@
 const mongoose = require('mongoose');
+const autoincrement = require("mongoose-auto-increment")
 const bannerSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
-    sub_id: { type: Number, required: false },
-    sub_name : { type: String, required: true },
-    department_id: { type: String, required: true },
-    sub_status: { type: Number, required: true },
-    sub_date: { type: Date, required: false }
+    //_id: mongoose.Schema.Types.ObjectId,
+    //sub_id: {type: String},
+    subject_name: { type: String, required: true },
+    admin_id: { type: Number, required: true },
+    sub_status: { type: String, required: true },
+    sub_date: { type: Date, required: false },
+    department_name: { type: String, required: false }
 });
 
-module.exports = mongoose.model('subject',bannerSchema);
+autoincrement.initialize(mongoose.connection)
+bannerSchema.plugin(autoincrement.plugin, {
+    model: "subzect",
+    field: "sub_id",
+    startAt: 1,
+    incrementBy: 1,
+
+})
+module.exports = mongoose.model('subzect', bannerSchema);   

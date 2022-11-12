@@ -1,6 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-module.exports = function (req, res, next){
+const checktoken = function (req, res, next){
  const token = req.header('Bearer');
  if (!token) { 
      return res.status(401).json({ msg: 'No token, authorization denied' });
@@ -11,12 +11,13 @@ module.exports = function (req, res, next){
                  return res.status(401).json({ msg: 'Token is not valid' });
              } else {
                  req.user = decoded.user;
-                 console.log(decoded.user)
+                 //console.log(decoded.user)
                  next();
              }
-         });
+         })
          }catch (err) {
              console.error('Something wrong with auth middleware');
              res.status(500).json({ msg: 'Server Error' });
          }
  }
+ module.exports = checktoken

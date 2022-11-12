@@ -5,7 +5,7 @@ const path = require('path');
 //IMAGE STORAGE
 const Storage = multer.diskStorage({
     destination : function(req, file, cb) {
-        cb(null, "uploads/")
+        cb(null, "samplefile/")
     },
     filename : function(req, file, cb) {
         let ext = path.extname(file.originalname)
@@ -17,18 +17,18 @@ const upload = multer({
     storage : Storage,
     fileFilter : function(req, file, callback) {
         if(
-            file.mimetype == "image/jpeg" || file.mimetype == "image/png"
+            file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "test/pdf"
             
         ){
             callback(null, true)
         } else {
-            console.log("only jpg and png file supported!")
+            console.log("only jpg, jpeg, pdf and png file supported!")
             callback (null, false)
         }
     },
     // limits : {
     //     fileSize: 1024 * 1024 * 2
     // }
-}).single('student_photo')
+}).single('upload_document')  //field name where this image/pdf file save in database
 
 module.exports = upload

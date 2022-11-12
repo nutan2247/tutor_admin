@@ -27,14 +27,14 @@ router.get('/banner/list', auth, async (req, res) => {
     try{
         const result = await Banner.find(); 
         return res.status(200).json({
-            status:200,
+            success:true,
             count: result.length,
             msg:'Banner List',
             data: result
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false, message: error.message})
     }
 });
 
@@ -50,11 +50,11 @@ router.patch('/banner/update/:_id', auth,  (req, res, next)=>{
     Banner.updateOne({ _id: id }, { $set: updateOps })
     .exec()
     .then(result => {
-        res.status(200).json(result);
+        res.status(200).json({success:true,result});
     })
     .catch(err => {
         console.log(err);
-        res.status(500).json({error:err});
+        res.status(500).json({success:false,error:err});
     });   
 });
 
@@ -65,11 +65,11 @@ router.delete('/banner/delete/:_id',auth, (req, res, next)=>{
     .exec()
     .then( result => {
         console.log(result)
-        res.status(200).json(result);
+        res.status(200).json({success:true,result});
     })
     .catch(err => {
         console.log(err);
-        res.status(500).json({error:err});
+        res.status(500).json({success:false,error:err});
     });
 });
 

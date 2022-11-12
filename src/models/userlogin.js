@@ -24,11 +24,10 @@ const TutorSchema =mongoose.Schema({
      student_photo : {
      type:String,
      required: true
-    },
-    id : {
-      type:String,
-      required: true
-     }
+     },
+    id :{
+      type:Object
+    }
   })
   
   module.exports = mongoose.model('tutor', TutorSchema)

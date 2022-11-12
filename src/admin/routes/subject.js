@@ -5,6 +5,7 @@ const Department= require('../models/department');
 const Chapter= require('../models/chapter'); 
 const mongoose  = require('mongoose'); 
 const checkToken= require('../middleware/check-token'); 
+//const chapter = require('../models/chapter');
 const router    = express.Router(); 
 
 
@@ -13,14 +14,14 @@ router.get('/chapter/list', checkToken, async (req, res) => {
     try{
         const result = await Chapter.find(); 
         return res.status(200).json({
-            status:200,
+            success:true,
             count: result.length,
             msg:'Chapter List',
             data: result
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
@@ -30,17 +31,12 @@ router.post('/chapter/add',checkToken, async (req, res) => {
     try{
         const data = new Chapter({
             _id: new mongoose.Types.ObjectId,
-            chap_id: req.body.chap_id,
-            student_board: req.body.student_board,
-            chapter_title: req.body.chapter_title,
-            class_id: req.body.class_id,
-            subject_id: req.body.subject_id,
-            topic_id: req.body.topic_id,
-            chapter_description: req.body.chapter_description,
-            chapter_document: req.body.chapter_document,
-            chapter_video: req.body.chapter_video,
-            language_id: req.body.language_id,
-            chapter_status: req.body.chapter_status,
+           chapter_title:req.body.chapter_title,
+           admin_id:req.body.admin_id,
+           subject:req.body.subject,
+           language:req.body.language,
+           total_topics:req.body.total_topics,
+           status: req.body.status,
             added_at: new Date()
             })
         data
@@ -53,21 +49,21 @@ router.post('/chapter/add',checkToken, async (req, res) => {
         })
         .catch(err =>{
                 res.status(500).json({
-                    success:fasle,
+                    success:false,
                     error:err
                 }); 
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
 
 //Chapter Edit
-router.patch('/chapter/update/:_id', checkToken,(req, res, next)=>{
+router.patch('/chapter/update/:_id', checkToken,(req, res)=>{
 
-    Subject.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
+    Chapter.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
     if (err) {
         return res.status(500).send({success: false, error: "Problem with Updating the recored "})
     };
@@ -93,14 +89,14 @@ router.get('/subject/list', checkToken, async (req, res) => {
     try{
         const result = await Subject.find(); 
         return res.status(200).json({
-            status:200,
+            success:true,
             count: result.length,
             msg:'Subject List',
             data: result
         })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
@@ -109,8 +105,10 @@ router.get('/subject/list', checkToken, async (req, res) => {
 router.post('/subject/add',checkToken, async (req, res) => {
     try{
         const data = new Subject({
-            _id: new mongoose.Types.ObjectId,
-            sub_id: req.body.sub_id,
+            //_id: new mongoose.Types.ObjectId,
+            //sub_id: req.body.sub_id,
+            admin_id: req.body.admin_id,
+            subject_name: req.body.subject_name,
             sub_name: req.body.sub_name,
             department_id: req.body.department_id,
             sub_status: req.body.sub_status,
@@ -128,12 +126,12 @@ router.post('/subject/add',checkToken, async (req, res) => {
         .catch(err =>{
                 console.log(err);
                 res.status(500).json({
-                    success:fasle, error:err
+                    success:false, error:err
                 }); 
             })
     }
     catch(error){
-        res.status(500).json({message: error.message})
+        res.status(500).json({success:false,message: error.message})
     }
 });
 
