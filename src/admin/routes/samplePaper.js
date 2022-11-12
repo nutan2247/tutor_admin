@@ -3,6 +3,7 @@ const Sample = require("../models/samplePaper")
 const checkToken = require('../middleware/check-token');
 const router = express.Router();
 const upload = require('../models/sampleFiles')
+const path = require("path")
 
 
 // **** Get All Sample Paper List **** //
