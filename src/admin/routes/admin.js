@@ -1,50 +1,50 @@
 require('dotenv').config(); //get env variables
-
-const express   = require('express'); 
-const Admin     = require('../models/admin'); 
-const Banner    = require('../models/banner'); 
-const Notification    = require('../models/notification'); 
-const router    = express.Router(); 
-const mongoose  = require('mongoose'); 
-const bcrypt    = require('bcrypt'); 
-const jwt       = require('jsonwebtoken');
-const checkToken= require('../middleware/check-token'); 
+const {Validator} = require('node-input-validator')
+const express = require('express');
+const Admin = require('../models/admin');
+const Banner = require('../models/banner');
+const Notification = require('../models/notification');
+const router = express.Router();
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const checkToken = require('../middleware/check-token');
 
 // Admin Login & genrate jwt token
 router.post('/login2', async (req, res) => {
-    try{
-        const details = await Admin.findOne({ email: req.body.email});
+    try {
+        const details = await Admin.findOne({ email: req.body.email });
         // console.log(req.params.email);
         // res.json(details)
-        if(details.length <1){
+        if (details.length < 1) {
             return res.status(401).json({
-                msg:'user not exits'
+                msg: 'user not exits'
             })
         }
         // bcrypt.compare(req.body.password,details[0].password,(err,result)=>{
-        if(req.body.password != details.password){
+        if (req.body.password != details.password) {
             return res.status(401).json({
-                msg:'Wrong password!!!'
+                msg: 'Wrong password!!!'
             })
         }
-        if(req.body.password === details.password){
+        if (req.body.password === details.password) {
 
             const token = jwt.sign(
                 {
-                    'email' : details.email,
-                    'id'    : details.id,
+                    'email': details.email,
+                    'id': details.id,
                     'first_name': details.first_name,
-                    'last_name' : details.last_name
+                    'last_name': details.last_name
                 },
                 process.env.JWT_KEY,
                 {
-                    expiresIn:'24h'
+                    expiresIn: '24h'
                 });
 
             return res.status(200).json({
-                status:200,
-                msg:'User Logged In!!!',
-                data: { 
+                status: 200,
+                msg: 'User Logged In!!!',
+                data: {
                     'email': details.email,
                     'fname': details.first_name,
                     'lname': details.last_name,
@@ -52,17 +52,51 @@ router.post('/login2', async (req, res) => {
                 }
             })
         }
-    } 
-    catch(error){
-        res.status(500).json({message: error.message, data: error})
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message, data: error })
     }
 });
 
 
 //Change Password 
-router.post("/changepassword"),async(req,res)=>{
+router.post("/changepassword", async (req, res) => {
     
+    //const adminData ={emai}
+    try{
+    const password = new Validator(req.body, {
+        old_password: 'required',
+        new_password: 'required',
+        confirm_password: 'required|same:new_password'
+    })
+    const matched = await password.check()
+    if(!matched){
+        return res.status(401).json(password.errors)
+    }
+    const admin = req.admin
+    if(bcrypt.compareSync(req.body.old_password, admin.password)){
+        const hashPassword = bcrypt.hashSync(req.body.new_password, 10)
+        await Admin.updateOne({_id:admin._id},{password:hashPassword})
+        const details =await Admin.findOne({_id:admin._id})
+        const token = jwt.sign(
+            {
+                'email': details.email,
+                'id': details.id,
+                'first_name': details.first_name,
+                'last_name': details.last_name
+            },
+            process.env.JWT_KEY,
+            {
+                expiresIn: '24h'
+            });
+        return res.status(200).json({success:true, mess: "Password successfully Updated", data: details })
+    }else{
+        return res.status(400).json({success:false, mess: "Password does not matched"})
+    }
+}catch(err){
+    return res.status(400).json({success:false, message:err.message})
 }
+})
 
 
 
@@ -124,12 +158,12 @@ router.post("/changepassword"),async(req,res)=>{
 //                             }); 
 //                         })
 //                     }
-               
+
 //                 });
 //             }
 //         }
 //     )
-   
+
 // });
 
 // router.delete('/:userId', (req, res, next) => {
@@ -181,34 +215,34 @@ router.post("/changepassword"),async(req,res)=>{
 
 
 // ** Add Push Notification** //
-router.post('/notification/add',async (req, res) => {
-    try{
+router.post('/notification/add', async (req, res) => {
+    try {
         const data = new Notification({
             _id: new mongoose.Types.ObjectId,
             title: req.body.title,
             description: req.body.description,
             date: new Date(),
             note_by: 'Admin'
-            })
-        data
-        .save()
-        .then(result =>{
-            // console.log(result);
-            res.status(200).json({
-                success: true,
-                message:'data stored!'
-            });
         })
-        .catch(err =>{
+        data
+            .save()
+            .then(result => {
+                // console.log(result);
+                res.status(200).json({
+                    success: true,
+                    message: 'data stored!'
+                });
+            })
+            .catch(err => {
                 // console.log(err);
                 res.status(500).json({
-                    success:false, 
-                    error:err
-                }); 
+                    success: false,
+                    error: err
+                });
             })
     }
-    catch(error){
-        res.status(500).json({message: error.message})
+    catch (error) {
+        res.status(500).json({ message: error.message })
     }
 });
 
