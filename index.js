@@ -31,6 +31,7 @@ const questionRouter = require("./src/admin/routes/questionSet")
 const batchRouter = require("./src/admin/routes/batches")
 const topicRouter = require("./src/admin/routes/topic")
 const sampleRouter = require("./src/admin/routes/samplePaper")
+const dashBoard = require("./src/admin/routes/dashboard")
 const router = require('./src/users/user');
 //const tutor = require('./src/users/login')
 
@@ -51,3 +52,4 @@ app.use("/admin",questionRouter)
 app.use("/admin",batchRouter)
 app.use("/admin",topicRouter)
 app.use("/admin",sampleRouter)
+app.use("/admin",dashBoard)

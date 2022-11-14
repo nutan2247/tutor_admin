@@ -15,16 +15,24 @@ const Storage = multer.diskStorage({
 
 const upload = multer({
     storage : Storage,
-    fileFilter : function(req, file, callback) {
-        if(
-            file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg" || file.mimetype == "test/pdf"
-            
-        ){
-            callback(null, true)
-        } else {
-            console.log("only jpg, jpeg, pdf and png file supported!")
-            callback (null, false)
-        }
+    fileFilter : function(req, file, cb) {
+        switch (file.mimetype) {
+            case 'image/jpg':
+                 cb(null, './samplefile/');
+                 break;
+            case 'image/jpeg':
+                 cb(null, './samplefile/');
+                 break;
+            case 'image/png':
+                 cb(null, './samplefile/');
+                 break;
+            case 'application/pdf':
+                 cb(null, './samplefile/');
+                 break;
+            default:
+                 cb('only jpg, png, jpeg and pdf file supported!');
+                 break;
+       }
     },
     // limits : {
     //     fileSize: 1024 * 1024 * 2
