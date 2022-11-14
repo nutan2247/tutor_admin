@@ -3,7 +3,8 @@ const Sample = require("../models/samplePaper")
 const checkToken = require('../middleware/check-token');
 const router = express.Router();
 const upload = require('../models/sampleFiles')
-const path = require("path")
+const path = require("path");
+const { sample } = require("lodash");
 
 
 // **** Get All Sample Paper List **** //
@@ -31,12 +32,12 @@ router.post('/sample/add', checkToken, upload, async (req, res) => {
     }
     try {
         const data = new Sample({
-            title:req.body.title,
-            class_for:req.body.class_for,
-            exam_seating:req.body.exam_seating,
-            starting_time:req.body.starting_time,
-            time_duration:req.body.time_duration,
-            upload_document:req.file.path,
+            title: req.body.title,
+            class_for: req.body.class_for,
+            exam_seating: req.body.exam_seating,
+            starting_time: req.body.starting_time,
+            time_duration: req.body.time_duration,
+            upload_document: req.file.path,
             addedat: new Date()
         })
         data
@@ -61,15 +62,25 @@ router.post('/sample/add', checkToken, upload, async (req, res) => {
 
 
 //Sample Paper Edit
-router.patch('/sample/update/:_id', checkToken, upload, (req, res, next) => {
+router.patch('/sample/update/:_id', checkToken, upload, async (req, res, next) => {
+    const _id = req.params._id;
 
-    Sample.findByIdAndUpdate(req.params._id, req.body, (err, emp) => {
-        if (err) {
-            return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
-        };
-        res.send({ success: true, msg: "Update successfull" });
-    })
-});
+    if (req.file) {
+        upload_document = req.file.path
+    }
+    try {
+        await Sample.findByIdAndUpdate({ _id }, {
+            $set: {
+
+                upload_document: req.file.path,
+            },
+        }), res.send({ success: true, msg: "Update successfull" });
+
+    } catch (error) {
+        return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
+    }
+})
+
 
 //Delete Sample Paper
 router.delete('/sample/delete/:_id', checkToken, (req, res, next) => {

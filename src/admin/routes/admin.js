@@ -58,21 +58,34 @@ router.post('/login2', async (req, res) => {
     }
 });
 
+
+//Change Password 
+router.post("/changepassword"),async(req,res)=>{
+    
+}
+
+
+
+
+
+
+
+
 // Get all banners //
-router.get('/bannerList', async (req, res) => {
-    try{
-        const data = await Banner.find({})
-        .select('_id ban_id banner_title banner_posstion banner_description banner_url banner_status'); 
-        return res.status(200).json({
-            status:200,
-            msg:'All Banner List',
-            data: data
-        })
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-});
+// router.get('/bannerList', async (req, res) => {
+//     try{
+//         const data = await Banner.find({})
+//         .select('_id ban_id banner_title banner_posstion banner_description banner_url banner_status'); 
+//         return res.status(200).json({
+//             status:200,
+//             msg:'All Banner List',
+//             data: data
+//         })
+//     }
+//     catch(error){
+//         res.status(500).json({message: error.message})
+//     }
+// });
 
 
 // router.post("/signup",(req, res, next) => {
