@@ -59,46 +59,6 @@ router.post('/login2', async (req, res) => {
 });
 
 
-//Change Password 
-router.post("/changepassword", async (req, res) => {
-    
-    //const adminData ={emai}
-    try{
-    const password = new Validator(req.body, {
-        old_password: 'required',
-        new_password: 'required',
-        confirm_password: 'required|same:new_password'
-    })
-    const matched = await password.check()
-    if(!matched){
-        return res.status(401).json(password.errors)
-    }
-    const admin = req.admin
-    if(bcrypt.compareSync(req.body.old_password, admin.password)){
-        const hashPassword = bcrypt.hashSync(req.body.new_password, 10)
-        await Admin.updateOne({_id:admin._id},{password:hashPassword})
-        const details =await Admin.findOne({_id:admin._id})
-        const token = jwt.sign(
-            {
-                'email': details.email,
-                'id': details.id,
-                'first_name': details.first_name,
-                'last_name': details.last_name
-            },
-            process.env.JWT_KEY,
-            {
-                expiresIn: '24h'
-            });
-        return res.status(200).json({success:true, mess: "Password successfully Updated", data: details })
-    }else{
-        return res.status(400).json({success:false, mess: "Password does not matched"})
-    }
-}catch(err){
-    return res.status(400).json({success:false, message:err.message})
-}
-})
-
-
 
 
 

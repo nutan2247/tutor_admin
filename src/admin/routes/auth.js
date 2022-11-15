@@ -7,6 +7,7 @@ const auth = require('../middleware/check-token');
 const jwt = require('jsonwebtoken');
 // const config = require('config');
 const { check, validationResult } = require('express-validator');
+const upload = require("../models/adminImage")
 
 const Admin = require('../models/admin');
 
@@ -119,16 +120,19 @@ router.post("/changepassword", auth, async (req, res) => {
 
 
 //Update Profile
-router.patch("/update", auth, async (req, res) => {
+router.patch("/update", auth, upload, async (req, res) => {
   const _id = req.body._id
   const Details = {
     id: req.body.id,
     email: req.body.email,
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    password: req.body.password,
+    //password: req.body.password,
     image: req.body.image
   }
+  if (req.file) {
+    Details.image = req.file.path
+}
   try {
     const Data = await Admin.updateOne({ _id:_id }, {
       $set: {
@@ -136,8 +140,8 @@ router.patch("/update", auth, async (req, res) => {
         email: req.body.email,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        password: req.body.password,
-        image: req.body.image,
+        //password: req.body.password,
+        image: req.file.path,
       },
     })
     console.log(Details)

@@ -71,7 +71,11 @@ router.patch('/sample/update/:_id', checkToken, upload, async (req, res, next) =
     try {
         await Sample.findByIdAndUpdate({ _id }, {
             $set: {
-
+                title: req.body.title,
+                class_for: req.body.class_for,
+                exam_seating: req.body.exam_seating,
+                starting_time: req.body.starting_time,
+                time_duration: req.body.time_duration,
                 upload_document: req.file.path,
             },
         }), res.send({ success: true, msg: "Update successfull" });
