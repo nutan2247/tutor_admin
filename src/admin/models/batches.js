@@ -4,7 +4,7 @@ const BatchSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    admission_for: {
+    class_name: {
         type: String,
         required: true
     },
