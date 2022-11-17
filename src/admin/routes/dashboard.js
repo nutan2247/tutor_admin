@@ -6,7 +6,7 @@ const checkToken = require('../middleware/check-token');
 const router = express.Router();
 
 //Count Student Collection Documents by class
-router.post('/student', async (req, res) => {
+router.post('/student',checkToken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
         const result = await student.find({admin_id}).count()
@@ -24,7 +24,7 @@ router.post('/student', async (req, res) => {
 
 
 //Count Total Students in Student Collection
-router.get('/student/count', async (req, res) => {
+router.get('/student/count',checkToken, async (req, res) => {
     try {
         const result = await student.count()
         return res.status(200).json({
@@ -41,7 +41,7 @@ router.get('/student/count', async (req, res) => {
 
 
 //Count Total Chapters in Chapters Collection
-router.get('/chapter/count', async (req, res) => {
+router.get('/chapter/count',checkToken, async (req, res) => {
     try {
         const result = await Chapter.count()
         return res.status(200).json({
@@ -58,7 +58,7 @@ router.get('/chapter/count', async (req, res) => {
 
 
 //Count Total topics in Topics Collection
-router.get('/topic/count', async (req, res) => {
+router.get('/topic/count',checkToken, async (req, res) => {
     try {
         const result = await Topic.count()
         return res.status(200).json({
