@@ -6,9 +6,20 @@ const router    = express.Router();
 
 
 // **** Get All question List **** //
-router.get('/quiz/list',async (req, res) => { 
+router.get('/quiz/list',checkToken, async (req, res) => { 
+   
     try{
-        const result = await question.find(); 
+        const result = await question.aggregate([
+            {
+                $lookup:
+                {
+                    from: "questionsets",
+                    localField: "set",
+                    foreignField: "_id",
+                    as: "result"
+                }
+              },{ $project:{ "result.chapter_name": 0, "result.qps_title": 0, "result.qps_time": 0, "result.qps_mark": 0, "result.no_of_ques": 0, "result.ques_ids": 0, "result.qps_date": 0, "result.solution_pdf": 0, "__v": 0, "result.qp_status": 0 } }
+      ])
         return res.status(200).json({
             success:true,
             status:200,
@@ -24,7 +35,7 @@ router.get('/quiz/list',async (req, res) => {
 
 
 // ** Add question** //
-router.post('/quiz/add',async (req, res) => {
+router.post('/quiz/add',checkToken, async (req, res) => {
     try{
         const data = new question({
             //_id: new mongoose.Types.ObjectId,
@@ -55,7 +66,7 @@ router.post('/quiz/add',async (req, res) => {
 
 
 //Question Edit
-router.patch('/quiz/update/:_id',(req, res, next)=>{
+router.patch('/quiz/update/:_id',checkToken, (req, res, next)=>{
 
     question.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
     if (err) {
@@ -66,7 +77,7 @@ router.patch('/quiz/update/:_id',(req, res, next)=>{
 });
 
 //Delete Question 
-router.delete('/quiz/delete/:_id', (req, res, next)=>{
+router.delete('/quiz/delete/:_id',checkToken, (req, res, next)=>{
     const id = req.params._id;
     question.deleteOne({ _id : id })
     .exec()

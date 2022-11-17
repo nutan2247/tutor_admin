@@ -28,9 +28,9 @@ router.post('/batch/add', checkToken, async (req, res) => {
     try {
         const data = new Batch({
             board: req.body.board,
-            admission_for: req.body.admission_for,
-            department: req.body.department,
-            batch_time: req.body.batch_time,
+            class_name: req.body.class_name,
+            batch_start_time: req.body.batch_start_time,
+            batch_end_time: req.body.batch_end_time,
             status: req.body.status,
             addedat: new Date()
         })

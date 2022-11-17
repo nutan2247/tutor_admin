@@ -295,7 +295,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
     // Data123 = await student.findById({_id:id});
     // console.log(Data123)
     try {
-        const { student_name, student_email, contact_no } = req.body
+        const { student_name, student_email, } = req.body
         if (!student_name || !student_email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
         }
@@ -508,7 +508,7 @@ router.post('/student/subject', checktoken, async (req, res) => {
             status = true;
             msg = "one class subject";
         }
-        return res.status(200).json({ success: status, msg : msg, subjec })
+        return res.status(200).json({ success: status, msg: msg, subjec })
 
     } catch (error) {
         res.status(500).json({ succes: false, message: error.message })

@@ -5,7 +5,7 @@ const path = require('path');
 //IMAGE STORAGE
 const Storage = multer.diskStorage({
     destination : function(req, file, cb) {
-        cb(null, "uploads/")
+        cb(null, "adminImage/")
     },
     filename : function(req, file, cb) {
         let ext = path.extname(file.originalname)
@@ -29,6 +29,6 @@ const upload = multer({
     // limits : {
     //     fileSize: 1024 * 1024 * 2
     // }
-}).single('student_photo')
+}).single('image') //where you want to save image
 
 module.exports = upload
