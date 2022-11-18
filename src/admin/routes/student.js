@@ -53,8 +53,7 @@ router.post('/student/add', auth, async (req, res) => {
             login_code: req.body.login_code,
             status: req.body.status,
             added_at: req.body.added_at,
-            modified_at: req.body.modified_at,
-          
+            modified_at: req.body.modified_at
         })
         data
             .save()

@@ -99,7 +99,6 @@ const studentSchema = mongoose.Schema({
     modified_at: {
         type: Date,
         default:Date.now()
-    },
-   
+    }
 })
 module.exports = mongoose.model("Student", studentSchema)

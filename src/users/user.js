@@ -8,9 +8,10 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const student = require('../models/userlogin')
-const OtpGenerate = require('../models/otpgenerate')
-const OtpVerify = require('../models/otpverify')
+//const Student = require('../admin/models/student')
+const Student = require("../admin/models/student")
+//const OtpGenerate = require('../models/otpgenerate')
+const OtpVerify = require('../admin/models/otpsave')
 const subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
 const subStatus = require('../admin/models/class')
@@ -171,17 +172,16 @@ router.get('/userList', (req, res, next) => {
 
 
 //LOGIN
-router.post('/Signin', async (req, res) => {
-    contact_no = req.body.contact_no
+router.post('/signin', async (req, res) => {
+    const mobile_number = req.body.mobile_number
     try {
-
-        const data = await student.findOne({ contact_no })
+        const data = await Student.findOne({ mobile_number: mobile_number })
         if (!data) { return res.status(500).json({ success: false, message: 'Please Enter a Valid Contact No' }) }
         res.status(200).json({ success: true, data })
-        console.log(data)
+        //console.log(data)
 
     } catch (error) {
-        res.status(500).json({ error })
+        return res.status(500).json({ success: false, error: "Please Enter a Valid Mobile_no" })
     }
 
 })
@@ -189,15 +189,15 @@ router.post('/Signin', async (req, res) => {
 
 //OTP GENERATE
 router.post('/login_by_otp', async (req, res) => {
-    contact_no = req.body.contact_no
+    const mobile_number = req.body.mobile_number
     try {
-        const Data = await OtpGenerate.findOne({ contact_no })
+        const Data = await Student.findOne({ mobile_number })
         if (!Data) { res.status(400).json({ success: false, message: 'Please Enter a Valid Contact No' }) }
 
         const AutoOTP = otpGenerator.generate(6, {
             digits: true, lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false
         })
-        const otp = new OtpVerify({ contact_no: contact_no, otp: AutoOTP })
+        const otp = new OtpVerify({ mobile_number: mobile_number, otp: AutoOTP })
         const salt = await bcrypt.genSalt(10)
         otp.otp = await bcrypt.hash(otp.otp, salt)
 
@@ -218,22 +218,26 @@ router.post('/login_by_otp', async (req, res) => {
 
 //VERIFY OTP
 router.post('/verify_otp', async (req, res) => {
+    const mobile_number = req.body.mobile_number
     const otpHolder = await OtpVerify.find({
-        contact_no: req.body.contact_no
+        mobile_number: req.body.mobile_number
         // otp : req.body.otp
 
     })
-    if (otpHolder.length === 0) return res.status(400).json({ success: false, message: 'EXPIRED OTP' })
-    const rightthreeFind = otpHolder[otpHolder.length - 1]
+    //console.log(otpHolder)
+    if(otpHolder !=null && otpHolder.length === 0) return res.status(400).json({ success: false, message: 'EXPIRED OTP' })
+    const rightthreeFind = otpHolder [otpHolder.length-1]
+    //console.log(rightthreeFind)
     const validUser = bcrypt.compareSync(req.body.otp, rightthreeFind.otp)
-    if (rightthreeFind.contact_no === req.body.contact_no && validUser) {
-        const Data1 = new OtpGenerate(_.pick(req.body, ["contact_no"]))
-        const user = await student.findOne({ contact_no })
+    if (rightthreeFind.mobile_number === req.body.mobile_number && validUser) {
+        const Data1 = new Student(_.pick(req.body, ["mobile_number"]))
+        const user = await Student.find({ mobile_number })
+        console.log(user)
 
         const payload = {
             user: {
                 _id: user._id,
-                contact_no: user.contact_no,
+                mobile_number: user.mobile_number,
 
             }
         };
