@@ -1,22 +1,22 @@
 const mongoose = require("mongoose")
 const studentSchema = mongoose.Schema({
-    std_id: {
-        type: Number,
-        required: true
-    },
-    btcsess_id: {
-        type: Number,
-        required: true
-    },
-    student_email: {
+    board: {
         type: String,
         required: true
     },
-    student_password: {
+    admission_for: {
         type: String,
         required: true
     },
-    student_name: {
+    department: {
+        type: String,
+        required: true
+    },
+    select_batch_time: {
+        type: String,
+        required: true
+    },
+    name: {
         type: String,
         required: true
     },
@@ -28,23 +28,11 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    contact_guardian_no: {
-        type: Number,
-        required: true
-    },
-    address: {
+    email: {
         type: String,
         required: true
     },
-    date_of_birth: {
-        type: Date,
-        required: true
-    },
-    contact_no: {
-        type: Number,
-        required: true
-    },
-    date_of_adminssion: {
+    password: {
         type: String,
         required: true
     },
@@ -52,66 +40,66 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    batch_id: {
+    mobile_number: {
         type: Number,
         required: true
     },
-    admin_id: {
+    contact_number_father: {
         type: Number,
         required: true
     },
-    department_id: {
-        type: Number,
-        required: true
-    },
-    student_board: {
+    date_of_birth: {
         type: String,
         required: true
     },
-    sit_no: {
-        type: Number,
-        required: true
-    },
-    roll_on: {
-        type: Number,
-        required: true
-    },
-    exam_section: {
+    address: {
         type: String,
         required: true
     },
-    student_photo: {
+    payment_type: {
         type: String,
         required: true
     },
-    token: {
-        type: String,
-        required: true
-    },
-    signuptnc: {
+    fee_amount: {
         type: Number,
         required: true
     },
-    student_status: {
+    payment_mode: {
+        type: String,
+        required: true
+    },
+    registration_no: {
+        type: Number,
+        required: true
+    },
+    roll_no: {
+        type: Number,
+        required: true
+    },
+    session: {
+        type: String,
+        required: true
+    },
+    exam_seating: {
+        type: String,
+        required: true
+    },
+    login_code: {
+        type: String,
+        required: true
+    },
+    status: {
         type: String,
         required: true
     },
     added_at: {
         type: Date,
-        required: true
+        default:Date.now()
     },
     modified_at: {
         type: Date,
-        required: true
+        default:Date.now()
     },
-    login_status: {
-        type: Number,
-        required: true
-    },
-    login_session_id: {
-        type: String,
-        required: true
-    },
-
+   
 })
 module.exports = mongoose.model("Student", studentSchema)
