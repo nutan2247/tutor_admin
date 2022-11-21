@@ -12,15 +12,17 @@ const jwt = require('jsonwebtoken');
 const Student = require("../admin/models/student")
 //const OtpGenerate = require('../models/otpgenerate')
 const OtpVerify = require('../admin/models/otpsave')
-const subject = require('../admin/models/subject')
+const Subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
-const subStatus = require('../admin/models/class')
+const Class = require('../admin/models/class')
 const upload = require('../models/uploadimage')
-const watchlatest = require('../models/watchlatest')
-const Notification = require("../models/Notifications")
-const checkBox = require("../models/SubjectCheckbox")
-const Setting = require('../models/contact_us');
-const admission = require("../models/chapter")
+const watchlatest = require('../admin/models/watchlatest')
+const Notification = require("../admin/models/Notifications")
+const checkBox = require("../admin/models/SubjectCheckbox")
+//const Setting = require('../models/contact_us');
+const ContactUs = require("../admin/models/contactus")
+const Chapter= require('../admin/models/chapter'); 
+//const admission = require("../models/chapter")
 //const Question = require('../admin/models/questionSetPaper')
 const QuestionList = require('../models/question');
 const questionsetques = require('../models/questionStudent')
@@ -267,8 +269,8 @@ router.post('/verify_otp', async (req, res) => {
 router.get('/subject_class', checktoken, async (req, res) => {
     try {
 
-        const subzect = await subject.find()
-        const sub = await subStatus.find()
+        const subzect = await Subject.find()
+        const sub = await Class.find()
         const result = { "subject": subzect, "class": sub }
         res.status(200).json({ success: true, result })
 
@@ -285,10 +287,10 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
     const id = req.body._id;
 
     const Details = {
-        student_name: req.body.student_name,
-        student_email: req.body.student_email,
+        name: req.body.name,
+        email: req.body.email,
         father_name: req.body.father_name,
-        roll_on: req.body.roll_on,
+        roll_no: req.body.roll_no,
         date_of_admission: req.body.date_of_admission,
         // contact_no : req.body.contact_no,
         student_photo: req.body.student_photo,
@@ -299,16 +301,16 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
     // Data123 = await student.findById({_id:id});
     // console.log(Data123)
     try {
-        const { student_name, student_email, } = req.body
-        if (!student_name || !student_email) {
+        const {name, email } = req.body
+        if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
         }
-        const Data = await student.updateOne({ _id: id }, {
+        const Data = await Student.updateOne({ _id: id }, {
             $set: {
-                student_name: req.body.student_name,
-                student_email: req.body.student_email,
+                name: req.body.name,
+                email: req.body.email,
                 father_name: req.body.father_name,
-                roll_on: req.body.roll_on,
+                roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
                 student_photo: req.file.path,
             },
@@ -329,7 +331,7 @@ router.post('/student_objectid', checktoken, async (req, res) => {
     const _id = req.body._id
     //const contact_no = req.body.contact_no
     try {
-        const stu = await student.find({ _id }).select("-student_password")
+        const stu = await Student.find({ _id }).select("-student_password")
         res.status(200).json({ success: true, stu })
     } catch (err) {
         res.status(401).json({ success: false, message: 'Please enter a valid ID' })
@@ -355,7 +357,7 @@ router.get('/watch_latest', checktoken, async (req, res) => {
 router.get('/student_subject', checktoken, async (req, res) => {
     try {
 
-        const subj = await subject.find()
+        const subj = await Subject.find()
         res.status(200).json({ success: true, subj })
 
 
@@ -391,7 +393,7 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 //contact us api
 router.get("/contact_us", checktoken, async (req, res) => {
     try {
-        const sett = await Setting.find()
+        const sett = await ContactUs.find()
         return res.status(200).json({ success: true, sett })
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message })
@@ -401,9 +403,9 @@ router.get("/contact_us", checktoken, async (req, res) => {
 
 //chapter get api
 router.post("/chapter", checktoken, async (req, res) => {
-    const admission_id = req.body.admission_id
+    const admin_id = req.body.admin_id
     try {
-        const Data = await admission.find({ admission_id })
+        const Data = await Chapter.find({ admin_id })
         return res.status(200).json({ success: true, Data })
     } catch (err) {
         return res.status(400).json({ success: false, message: err.message })

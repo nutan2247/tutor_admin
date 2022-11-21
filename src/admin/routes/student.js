@@ -31,7 +31,6 @@ router.post('/student/add', auth, async (req, res) => {
             _id: new mongoose.Types.ObjectId,
             board: req.body.board,
             admission_for: req.body.admission_for,
-            department: req.body.department,
             select_batch_time: req.body.select_batch_time,
             name: req.body.name,
             father_name: req.body.father_name,
@@ -46,14 +45,14 @@ router.post('/student/add', auth, async (req, res) => {
             payment_type: req.body.payment_type,
             fee_amount: req.body.fee_amount,
             payment_mode: req.body.payment_mode,
-            registration_no: req.body.registration_no,
             roll_no: req.body.roll_no,
             session: req.body.session,
             exam_seating: req.body.exam_seating,
             login_code: req.body.login_code,
             status: req.body.status,
             added_at: req.body.added_at,
-            modified_at: req.body.modified_at
+            modified_at: req.body.modified_at,
+            student_photo: req.body.student_photo
         })
         data
             .save()
