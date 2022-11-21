@@ -10,4 +10,4 @@ const mongoose = require("mongoose")
     }
     
  })
- module.exports = mongoose.model('check', checkboxSchema)
+ module.exports = mongoose.model('checkbox', checkboxSchema)

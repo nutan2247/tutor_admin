@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const contactSchema = mongoose.Schema({
-    student_name:{
+    name:{
         type:String,
         required:true
     },

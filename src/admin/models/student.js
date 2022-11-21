@@ -1,14 +1,11 @@
 const mongoose = require("mongoose")
+const autoincrement = require("mongoose-auto-increment")
 const studentSchema = mongoose.Schema({
     board: {
         type: String,
         required: true
     },
     admission_for: {
-        type: String,
-        required: true
-    },
-    department: {
         type: String,
         required: true
     },
@@ -68,10 +65,6 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    registration_no: {
-        type: Number,
-        required: true
-    },
     roll_no: {
         type: Number,
         required: true
@@ -100,6 +93,19 @@ const studentSchema = mongoose.Schema({
         type: Date,
         default:Date.now()
     },
-   
+    student_photo:{
+        type:String,
+    },
+    date_of_admission:{
+        type:String
+    },
+    })
+    autoincrement.initialize(mongoose.connection)
+    studentSchema.plugin(autoincrement.plugin, {
+    model: "student",
+    field: "reg",
+    startAt: 1111,
+    incrementBy: 1,
+
 })
 module.exports = mongoose.model("Student", studentSchema)
