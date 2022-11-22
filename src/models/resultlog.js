@@ -1,26 +1,26 @@
 const mongoose = require("mongoose")
-const SampleSchema = mongoose.Schema({
-    title:{
+const resultSchema = mongoose.Schema({
+    student_id:{
         type:String,
         required:true
     },
-    class_for:{
+    class:{
         type:String,
         required:true
     },
-    exam_seating:{
+    subject:{
         type:String,
         required:true
     },
-    starting_time:{
+    ques_no:{
         type:Number,
         required:true
     },
-    time_duration:{
-        type:Number,
+    answer:{
+        type:String,
         required:true
     },
-    upload_document:{
+    correct_ans:{
         type:String,
         required:true
     },
@@ -29,4 +29,4 @@ const SampleSchema = mongoose.Schema({
         required:true
     }
 })
-module.exports = mongoose.model("SamplePaper",SampleSchema)
+module.exports = mongoose.model("Resultlog",resultSchema)

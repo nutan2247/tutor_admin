@@ -38,6 +38,7 @@ router.post('/sample/add', checkToken, upload, async (req, res) => {
             starting_time: req.body.starting_time,
             time_duration: req.body.time_duration,
             upload_document: req.file.path,
+            status:req.body.status,
             addedat: new Date()
         })
         data
@@ -77,6 +78,7 @@ router.patch('/sample/update/:_id', checkToken, upload, async (req, res, next) =
                 starting_time: req.body.starting_time,
                 time_duration: req.body.time_duration,
                 upload_document: req.file.path,
+                status:req.body.status
             },
         }), res.send({ success: true, msg: "Update successfull" });
 
