@@ -35,6 +35,7 @@ router.post('/chapter/add',checkToken, async (req, res) => {
            admin_id:req.body.admin_id,
            subject:req.body.subject,
            language:req.body.language,
+           topic_id: req.body.topic_id,
            total_topics:req.body.total_topics,
            status: req.body.status,
             added_at: new Date()

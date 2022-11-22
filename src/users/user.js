@@ -16,16 +16,27 @@ const Subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
 const Class = require('../admin/models/class')
 const upload = require('../models/uploadimage')
-const watchlatest = require('../admin/models/watchlatest')
-const Notification = require("../admin/models/Notifications")
+const watchlatest = require('../models/watchlatest')
+const Notification = require("../models/Notifications")
 const checkBox = require("../admin/models/SubjectCheckbox")
 //const Setting = require('../models/contact_us');
 const ContactUs = require("../admin/models/contactus")
-const Chapter= require('../admin/models/chapter'); 
+const Chapter = require('../admin/models/chapter');
+const questionSet = require('../admin/models/questionSetPaper');
+const question = require('../admin/models/question');
+const Banner = require("../admin/models/banner")
+const Notice = require("../admin/models/noticeBoard")
+const PaymentLog = require("../admin/models/paymentLog")
+const quiz = require("../models/quizresult")
+const resultlog = require("../models/resultlog")
+
+
+
+
 //const admission = require("../models/chapter")
 //const Question = require('../admin/models/questionSetPaper')
-const QuestionList = require('../models/question');
-const questionsetques = require('../models/questionStudent')
+// const QuestionList = require('../models/question');
+// const questionsetques = require('../models/questionStudent')
 //const { ideahub } = require('googleapis/build/src/apis/ideahub');
 
 
@@ -227,8 +238,8 @@ router.post('/verify_otp', async (req, res) => {
 
     })
     //console.log(otpHolder)
-    if(otpHolder !=null && otpHolder.length === 0) return res.status(400).json({ success: false, message: 'EXPIRED OTP' })
-    const rightthreeFind = otpHolder [otpHolder.length-1]
+    if (otpHolder != null && otpHolder.length === 0) return res.status(400).json({ success: false, message: 'EXPIRED OTP' })
+    const rightthreeFind = otpHolder[otpHolder.length - 1]
     //console.log(rightthreeFind)
     const validUser = bcrypt.compareSync(req.body.otp, rightthreeFind.otp)
     if (rightthreeFind.mobile_number === req.body.mobile_number && validUser) {
@@ -301,7 +312,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
     // Data123 = await student.findById({_id:id});
     // console.log(Data123)
     try {
-        const {name, email } = req.body
+        const { name, email } = req.body
         if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
         }
@@ -414,14 +425,14 @@ router.post("/chapter", checktoken, async (req, res) => {
 
 
 //Connect Two Collections
-router.get("/quiz", checktoken, async (req, res) => {
+router.post("/quiz", checktoken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
-        const quiz = await questionsetques.aggregate([{ $match: { admin_id } },
+        const quiz = await questionSet.aggregate([{ $match: { admin_id } },
         {
             $lookup:
             {
-                from: "admission_fors",
+                from: "classes",
                 localField: "admin_id",
                 foreignField: "admin_id",
                 as: "result"
@@ -438,7 +449,7 @@ router.get("/quiz", checktoken, async (req, res) => {
 //All Quiz Questions Get
 router.get("/quiz/question", checktoken, async (req, res) => {
     try {
-        const List = await QuestionList.find()
+        const List = await question.find()
         return res.status(200).json({ success: true, List })
     } catch (error) {
         return res.status(400).json({ success: false, message: error.message })
@@ -450,13 +461,13 @@ router.get("/quiz/question", checktoken, async (req, res) => {
 router.post("/quiz/question/list", checktoken, async (req, res) => {
     const id = mongoose.Types.ObjectId(req.body._id)
     try {
-        const ques = await questionsetques.aggregate([{ $match: { _id: id } },
+        const ques = await questionSet.aggregate([{ $match: { _id: id } },
         {
             $lookup:
             {
-                from: "questions",
+                from: "quizzes",
                 localField: "_id",
-                foreignField: "setid",
+                foreignField: "set",
                 as: "result"
             }
         }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
@@ -476,7 +487,7 @@ router.post('/subject/question', async (req, res) => {
     const admin_id = req.body.admin_id
     const subject = req.body.subject
     try {
-        const Data = await questionsetques.findOne({ admin_id, subject })
+        const Data = await questionSet.findOne({ admin_id, subject })
         return res.status(200).json({ success: true, Data })
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message })
@@ -489,8 +500,8 @@ router.post('/student/class', checktoken, async (req, res) => {
     const admin_id = req.body.admin_id
     try {
 
-        const classe = await subStatus.find({ admin_id })
-        res.status(200).json({ success: true, classe })
+        const clas = await Class.find({ admin_id })
+        res.status(200).json({ success: true, clas })
 
 
     } catch (error) {
@@ -506,11 +517,11 @@ router.post('/student/subject', checktoken, async (req, res) => {
         let status = false;
         let msg = "empty";
         if (!admin_id) {
-            subjec = await subject.find()
+            subjec = await Subject.find()
             status = true;
             msg = "All class subject";
         } else {
-            subjec = await subject.find({ admin_id })
+            subjec = await Subject.find({ admin_id })
             status = true;
             msg = "one class subject";
         }
@@ -518,6 +529,60 @@ router.post('/student/subject', checktoken, async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ succes: false, message: error.message })
+    }
+})
+
+//Banner Api
+router.get("/banner", async (req, res) => {
+    try {
+        const banner = await Banner.find({ banner_status: "active" })
+        return res.status(200).json({ success: true, data: banner })
+    } catch (err) {
+        return res.status(400).json({ success: false, msg: err.message })
+    }
+})
+
+//News Api
+router.get("/news", async (req, res) => {
+    try {
+        const news = await Notice.find({ status: "active" })
+        return res.status(200).json({ success: true, data: news })
+    } catch (err) {
+        return res.status(400).json({ success: false, msg: err.message })
+    }
+})
+
+//Payment History Api
+router.post("/payment/history", async (req, res) => {
+    const payment_id = req.body.payment_id
+    try {
+        const payment = await PaymentLog.find({ payment_id })
+        return res.status(200).json({ success: true, data: payment })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
+
+//quiz result Api
+router.post("/quizresult", async (req, res) => {
+    const question_no = req.body.question_no
+    try {
+        const result = await quiz.find({ question_no })
+        return res.status(200).json({ success: true, data: result })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
+
+//quiz log Api
+router.post("/quizlog", async (req, res) => {
+    const {student_id, admin_id, subject}= req.body
+    
+    try {
+        const result = await resultlog.findOne({ student_id, admin_id, subject })
+        return res.status(200).json({ success: true, data: result })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
     }
 })
 module.exports = router
