@@ -28,7 +28,8 @@ const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
 const PaymentLog = require("../admin/models/paymentLog")
 const quiz = require("../models/quizresult")
-const resultlog = require("../models/resultlog")
+const resultlog = require("../models/resultlog");
+const quizresult = require('../models/quizresult');
 
 
 
@@ -574,12 +575,47 @@ router.post("/quizresult", async (req, res) => {
     }
 })
 
+//Create quiz log
+router.post("/quizlog/add", async (req, res) => {
+    try {
+        const data = await new resultlog({
+            student_id: req.body.student_id,
+            admin_id: req.body.admin_id,
+            subject: req.body.subject,
+            ques_no: req.body.ques_no,
+            answer: req.body.answer,
+            correct_ans: req.body.correct_ans,
+            status: req.body.status,
+        })
+        data.save()
+        return res.status(200).json({ success: true, data: "data stored" })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
+
+
+router.post("/quizlog/sum", async (req, res) => {
+    try {
+        const data1 = await resultlog.aggregate([
+            {$group:{
+                 _id:"$ques_no",
+                attempts:{$sum:1}
+            }}
+        ])
+        return res.status(200).json({success:true, data:data1})
+        //data.save()
+    }catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+     }
+})
+
 //quiz log Api
 router.post("/quizlog", async (req, res) => {
-    const {student_id, admin_id, subject}= req.body
-    
+    const { student_id, admin_id, subject } = req.body
+
     try {
-        const result = await resultlog.findOne({ student_id, admin_id, subject })
+        const result = await resultlog.find({ student_id, admin_id, subject })
         return res.status(200).json({ success: true, data: result })
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })

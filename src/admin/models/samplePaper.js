@@ -22,7 +22,7 @@ const SampleSchema = mongoose.Schema({
     },
     upload_document:{
         type:String,
-        required:true
+        required:false
     },
     status:{
         type:String,

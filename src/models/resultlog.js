@@ -4,7 +4,7 @@ const resultSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    class:{
+    admin_id:{
         type:String,
         required:true
     },
@@ -22,7 +22,7 @@ const resultSchema = mongoose.Schema({
     },
     correct_ans:{
         type:String,
-        required:true
+        required:false
     },
     status:{
         type:String,
