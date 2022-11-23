@@ -4,6 +4,10 @@ const QuizSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    qset:{ //Question set
+        type:String,
+        required:true
+    },
     class:{
         type:String,
         required:true
@@ -30,7 +34,7 @@ const QuizSchema = mongoose.Schema({
     },
     status:{
         type:String,
-        required:true
+        required:false
     }
 })
 module.exports = mongoose.model("quizresult",QuizSchema)

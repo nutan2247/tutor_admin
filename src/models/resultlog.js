@@ -1,5 +1,9 @@
 const mongoose = require("mongoose")
 const resultSchema = mongoose.Schema({
+    result_id:{
+        type:String,
+        required:true
+    },
     student_id:{
         type:String,
         required:true
@@ -26,7 +30,7 @@ const resultSchema = mongoose.Schema({
     },
     status:{
         type:String,
-        required:true
+        required:false
     }
 })
 module.exports = mongoose.model("Resultlog",resultSchema)
