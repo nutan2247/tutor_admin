@@ -580,80 +580,8 @@ router.post("/quizresult", async (req, res) => {
 router.post("/quizlog/add", async (req, res) => {
     try {
         const check = await quizresult.findOne({ qset: req.body.qset })
-        .then(checkres => { 
-            const nres = new quizresult({
-                student_id: req.body.student_id,
-                qset: req.body.qset,
-                class: req.body.admin_id,
-                subject: req.body.subject,
-                attempt: 3,
-                wrong: 2,
-                correct: 1
-            })
-            nres.updateOne(check._id) 
-            .then(result => {
-                const  log = new resultlog({
-                    result_id: result._id,
-                    student_id: req.body.student_id,
-                    admin_id: req.body.admin_id,
-                    subject: req.body.subject,
-                    ques_no: req.body.ques_no,
-                    answer: req.body.answer,
-                    correct_ans: req.body.correct_ans,
-                })
-                log.save() 
-                .then(logresult => {  
-                    return res.status(200).json({ success: true, msg: 'data updated' })
-                })
-                .catch(err => {
-                    res.status(500).json({
-                        success: false,
-                        error: err
-                    });
-                });
-
-            })
-            .catch(err => {
-               
-                const nres = new quizresult({
-                    student_id: req.body.student_id,
-                    qset: req.body.qset,
-                    class: req.body.admin_id,
-                    subject: req.body.subject,
-                    attempt: 2,
-                    wrong: 1,
-                    correct: 1
-                })
-                nres.save() 
-                .then(result => {
-                    const  log = new resultlog({
-                        result_id: result._id,
-                        student_id: req.body.student_id,
-                        admin_id: req.body.admin_id,
-                        subject: req.body.subject,
-                        ques_no: req.body.ques_no,
-                        answer: req.body.answer,
-                        correct_ans: req.body.correct_ans,
-                    })
-                    log.save() 
-                    .then(logresult => {  
-                        return res.status(200).json({ success: true, msg: 'data saved' })
-                    })
-                    .catch(err => {
-                        res.status(500).json({
-                            success: false,
-                            error: err
-                        });
-                    });
-
-                })
-                .catch(err => {
-                    res.status(500).json({
-                        success: false,
-                        error: err
-                    });
-                });
-            });
+        .then(checkres => {  
+            return res.status(200).json({ checkres })
         })
         .catch(err => {
             res.status(500).json({
@@ -662,6 +590,44 @@ router.post("/quizlog/add", async (req, res) => {
             });
         }); 
 
+        const nres = new quizresult({
+            student_id: req.body.student_id,
+            qset: req.body.qset,
+            class: req.body.admin_id,
+            subject: req.body.subject,
+            attempt: 2,
+            wrong: 1,
+            correct: 1
+        })
+        nres.save() 
+        .then(result => {
+            const  log = new resultlog({
+                result_id: result._id,
+                student_id: req.body.student_id,
+                admin_id: req.body.admin_id,
+                subject: req.body.subject,
+                ques_no: req.body.ques_no,
+                answer: req.body.answer,
+                correct_ans: req.body.correct_ans,
+            })
+            log.save() 
+            .then(logresult => {  
+                return res.status(200).json({ success: true, msg: 'data saved' })
+            })
+            .catch(err => {
+                res.status(500).json({
+                    success: false,
+                    error: err
+                });
+            });
+
+        })
+        .catch(err => {
+            res.status(500).json({
+                success: false,
+                error: err
+            });
+        });
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })
     }

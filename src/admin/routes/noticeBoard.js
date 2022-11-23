@@ -34,6 +34,27 @@ router.get('/notice/list', checkToken, async (req, res) => {
     }
 });
 
+//NoticeBoard get by id
+//Read Notice Board News
+router.get('/notice/list/:_id', checkToken, async (req, res) => {
+    const _id = req.params._id
+    try {
+        const result = await Notice.find({_id});
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            count: result.length,
+            msg: 'Notice Board List',
+            data: result
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message })
+    }
+});
+
+
+
 
 //NoticeBoard Edit
 router.patch('/notice/update/:_id', checkToken, (req, res, next) => {
