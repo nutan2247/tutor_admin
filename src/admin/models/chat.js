@@ -8,6 +8,10 @@ const chatSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    student_id:{
+        type:Number,
+        required:true
+    },
     contact_no:{
         type:Number,
         required:true

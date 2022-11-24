@@ -16,6 +16,7 @@ router.post("/chat/add", checkToken, upload, async (req, res) => {
         const data = await new Chat({
             Image: req.file.path,
             student_name: req.body.student_name,
+            student_id: req.body.student_id,
             contact_no: req.body.contact_no,
             no_of_chat: req.body.no_of_chat,
             new_chat: req.body.new_chat,
@@ -45,6 +46,23 @@ router.get('/chat/list', checkToken, async (req, res) => {
     }
 });
 
+//chat get by studentid
+router.get('/chat/list/:student_id', checkToken, async (req, res) => {
+    const student_id = req.params.student_id
+    try {
+        const result = await Chat.find({student_id});
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            msg: 'Chat List',
+            data: result
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message })
+    }
+});
+
 
 //Chat Edit
 router.patch('/chat/update/:_id', checkToken, upload, async (req, res, next) => {
@@ -52,6 +70,7 @@ router.patch('/chat/update/:_id', checkToken, upload, async (req, res, next) => 
     const Details = {
         Image: req.body.Image,
         student_name: req.body.student_name,
+        student_id: req.body.student_id,
         contact_no: req.body.contact_no,
         no_of_chat: req.body.no_of_chat,
         new_chat: req.body.new_chat,
@@ -66,6 +85,7 @@ router.patch('/chat/update/:_id', checkToken, upload, async (req, res, next) => 
             $set: {
                 Image: req.file.path,
                 student_name: req.body.student_name,
+                student_id: req.body.student_id,
                 contact_no: req.body.contact_no,
                 no_of_chat: req.body.no_of_chat,
                 new_chat: req.body.new_chat,
@@ -94,7 +114,7 @@ router.delete('/chat/delete/:_id', checkToken, (req, res, next) => {
 });
 
 //message from User Side
-router.post("/chat/user",checkToken, async (req, res) => {
+router.post("/chat/user", checkToken, async (req, res) => {
     try {
         const user = await new ChatReply({
             student_id: req.body.student_id,
@@ -113,7 +133,7 @@ router.post("/chat/user",checkToken, async (req, res) => {
 })
 
 //message from Admin Side
-router.post("/chat/admin",checkToken, async (req, res) => {
+router.post("/chat/admin", checkToken, async (req, res) => {
     try {
         const admin = await new ChatReply({
             student_id: req.body.student_id,
@@ -136,7 +156,7 @@ router.post("/chat/admin",checkToken, async (req, res) => {
 router.post('/chating/list', async (req, res) => {
     const student_id = req.body.student_id
     try {
-        const result = await ChatReply.find({student_id});
+        const result = await ChatReply.find({ student_id });
         return res.status(200).json({
             success: true,
             status: 200,
