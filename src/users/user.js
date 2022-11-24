@@ -576,83 +576,96 @@ router.post("/quizresult", async (req, res) => {
     }
 })
 
+function addresult(data){
+    const neres = new quizresult({
+        student_id: data.student_id,
+        qset: data.qset,
+        class: data.admin_id,
+        subject: data.subject,
+        attempt: 2,
+        wrong: 1,
+        correct: 1
+    })
+    const qr = neres.save();
+    return qr;   
+}
+
+function updateresult(data){   
+    const check1 = quizresult.updateOne({ qset: data.qset }, {
+    $set:{
+        student_id: data.student_id,
+        qset: data.qset,
+        class: data.admin_id,
+        subject: data.subject,
+        attempt: 11,
+        wrong: 5,
+        correct: 5
+        }
+    })
+    
+    return check1;   
+}
+
+function addlog(data,resid){
+    const log = new resultlog({
+        result_id: resid,
+        student_id: data.student_id,
+        admin_id: data.admin_id,
+        subject: data.subject,
+        ques_no: data.ques_no,
+        answer: data.answer,
+        correct_ans: data.correct_ans,
+    })
+    const lr = log.save();   
+    return lr;   
+}
 //Create quiz log
 router.post("/quizlog/add", async (req, res) => {
+    
     try {
-        const check = await quizresult.findOne({ qset: req.body.qset })
-        .then(checkres => {  
-            return res.status(200).json({ checkres })
-        })
-        .catch(err => {
-            res.status(500).json({
-                success: false,
-                error: err
-            });
-        }); 
-
-        const nres = new quizresult({
-            student_id: req.body.student_id,
-            qset: req.body.qset,
-            class: req.body.admin_id,
-            subject: req.body.subject,
-            attempt: 2,
-            wrong: 1,
-            correct: 1
-        })
-        nres.save() 
-        .then(result => {
-            const  log = new resultlog({
-                result_id: result._id,
-                student_id: req.body.student_id,
-                admin_id: req.body.admin_id,
-                subject: req.body.subject,
-                ques_no: req.body.ques_no,
-                answer: req.body.answer,
-                correct_ans: req.body.correct_ans,
-            })
-            log.save() 
-            .then(logresult => {  
-                return res.status(200).json({ success: true, msg: 'data saved' })
-            })
-            .catch(err => {
-                res.status(500).json({
-                    success: false,
-                    error: err
-                });
-            });
-
-        })
-        .catch(err => {
-            res.status(500).json({
-                success: false,
-                error: err
-            });
-        });
+        const check = await quizresult.findOne({ qset: req.body.qset });
+        var quizres = '';
+        if(check){
+         const ur = updateresult(req.body)
+            if(ur){
+                addlog(req.body,check._id);
+                quizres = 'data updated';
+            }
+        }else{
+            const isresult = addresult(req.body);
+            if(isresult){
+                addlog(req.body,isresult._id);
+                quizres = 'data added';
+            }
+        } 
+        return res.status(200).json({ success: true, msg: quizres }) 
     } catch (err) {
-        return res.status(401).json({ success: false, msg: err.message })
+        res.status(401).json({ success: false, msg: err.message })
     }
 })
 
 
 router.get("/quizlog/sum", async (req, res) => {
-        try {
-            const data1 = await resultlog.aggregate([   {$match: {$expr: {$eq: ["$answer", "$correct_ans"]}}}, // {$match: {$expr: {$ne: ["$answer", "$correct_ans"]}}},
+    try {
+        const data1 = await resultlog.aggregate([{ $match: { $expr: { $eq: ["$answer", "$correct_ans"] } } }, // {$match: {$expr: {$ne: ["$answer", "$correct_ans"]}}},
 
-            //{"$expr":{"$eq":["$answer"==="$correct_ans"]}},
+        //{"$expr":{"$eq":["$answer"==="$correct_ans"]}},
 
-                {$group:{
-                     _id:"$student_id",
-                    attempts:{$sum:1},
-                    correct_ans:{$sum:1},
-                }},
-                //{$where:"this.resultlog.answer === this.resultlog.correct_ans"}
-            ])
-            return res.status(200).json({success:true, data:data1})
-            //data.save()
-        }catch (err) {
-            return res.status(401).json({ success: false, msg: err.message })
-         }
-    })
+        {
+            $group: {
+                _id: "$student_id",
+                attempts: { $sum: 1 },
+                correct_ans: { $sum: 1 },
+            }
+        },
+            //{$where:"this.resultlog.answer === this.resultlog.correct_ans"}
+        ])
+        return res.status(200).json({ success: true, data: data1 })
+        //data.save()
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
 
 //db.collection.find({ "$expr": { "$eq": [ "$_id" , "$md5" ] } })
 
