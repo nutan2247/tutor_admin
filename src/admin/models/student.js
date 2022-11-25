@@ -5,7 +5,7 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    admission_for: {
+    admin_id: {
         type: String,
         required: true
     },

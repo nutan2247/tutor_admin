@@ -30,7 +30,7 @@ const PaymentLog = require("../admin/models/paymentLog")
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
-const subject = require('../admin/models/subject');
+//const subject = require('../admin/models/subject');
 
 
 
@@ -246,19 +246,20 @@ router.post('/verify_otp', async (req, res) => {
     const validUser = bcrypt.compareSync(req.body.otp, rightthreeFind.otp)
     if (rightthreeFind.mobile_number === req.body.mobile_number && validUser) {
         const Data1 = new Student(_.pick(req.body, ["mobile_number"]))
-        const user = await Student.find({ mobile_number })
+        const user = await Student.findOne({ mobile_number })
         console.log(user)
 
         const payload = {
             user: {
                 _id: user._id,
                 mobile_number: user.mobile_number,
-
-            }
+                admin_id:user.admin_id
+            },
+           //console.log(payload)
         };
 
         //   console.log(payload);
-        jwt.sign(payload, process.env.JWT_KEY, { expiresIn: '24h' },
+        jwt.sign({payload}, process.env.JWT_KEY, { expiresIn: '24h' },
             (err, token) => {
                 if (err) throw err;
                 res.status(200).json({
