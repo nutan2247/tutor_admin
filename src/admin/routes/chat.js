@@ -47,7 +47,7 @@ router.get('/chat/list', checkToken, async (req, res) => {
 });
 
 //chat get by studentid
-router.get('/chat/list/:student_id', checkToken, async (req, res) => {
+router.post('/chat/list/:student_id', checkToken, async (req, res) => {
     const student_id = req.params.student_id
     try {
         const result = await Chat.find({student_id});

@@ -591,24 +591,33 @@ function addresult(data){
 }
 
 function updateresult(data){   
+    const Details = {
+        student_id: data.student_id,
+        qset: data.qset,
+        class: data.admin_id,
+        subject: data.subject,
+        attempt: 15,
+        wrong: 1,
+        correct: 14 
+    }
+        //console.log(Details)
     const check1 = quizresult.updateOne({ qset: data.qset }, {
     $set:{
         student_id: data.student_id,
         qset: data.qset,
         class: data.admin_id,
         subject: data.subject,
-        attempt: 11,
-        wrong: 5,
-        correct: 5
+        attempt: 20,
+        wrong: 10,
+        correct: 10
         }
     })
-    
     return check1;   
 }
 
 function addlog(data,resid){
     const log = new resultlog({
-        result_id: resid,
+        result_id: data.result_id,
         student_id: data.student_id,
         admin_id: data.admin_id,
         subject: data.subject,
@@ -623,16 +632,21 @@ function addlog(data,resid){
 router.post("/quizlog/add", async (req, res) => {
     
     try {
-        const check = await quizresult.findOne({ qset: req.body.qset });
+        const check = await quizresult.findOne({ qset: req.body.qset })
+        console.log(check)
         var quizres = '';
         if(check){
          const ur = updateresult(req.body)
+         console.log(ur)
             if(ur){
+                //console.log(ur)
+
                 addlog(req.body,check._id);
                 quizres = 'data updated';
             }
         }else{
             const isresult = addresult(req.body);
+            console.log(isresult)
             if(isresult){
                 addlog(req.body,isresult._id);
                 quizres = 'data added';
