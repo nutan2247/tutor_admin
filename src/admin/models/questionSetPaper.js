@@ -9,7 +9,7 @@ const questionSetSchema = mongoose.Schema({
         //required: true
     },
     admin_id:{
-        type: Number,
+        type: String,
         //required: true
     } ,
     subject:{
