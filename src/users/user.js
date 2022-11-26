@@ -490,7 +490,7 @@ router.post('/subject/question', async (req, res) => {
     const admin_id = req.body.admin_id
     const subject = req.body.subject
     try {
-        const Data = await questionSet.findOne({ admin_id, subject })
+        const Data = await questionSet.find({ admin_id, subject })
         return res.status(200).json({ success: true, Data })
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message })
