@@ -48,7 +48,7 @@ router.post('/banner/add', auth, upload, async (req, res) => {
         const data = new banner({
             banner_title: req.body.banner_title,
             banner_status: req.body.banner_status,
-            banner_image: req.file.path,
+            banner_image: "http://localhost:3000/"+req.file.path,
             addedat: new Date()
         })
         data
