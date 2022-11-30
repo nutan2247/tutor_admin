@@ -475,7 +475,7 @@ router.post("/quiz/question/list", checktoken, async (req, res) => {
             }
         }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
         ])
-        return res.status(200).json({ success: true, ques }),
+        return res.status(200).json({ success: true, result:ques[0] }),
             console.log(ques)
     } catch (error) {
         return res.status(401).json({ success: false, message: error.message })
