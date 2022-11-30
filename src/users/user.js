@@ -253,13 +253,13 @@ router.post('/verify_otp', async (req, res) => {
             user: {
                 _id: user._id,
                 mobile_number: user.mobile_number,
-                admin_id:user.admin_id
+                admin_id: user.admin_id
             },
-           //console.log(payload)
+            //console.log(payload)
         };
 
         //   console.log(payload);
-        jwt.sign({payload}, process.env.JWT_KEY, { expiresIn: '24h' },
+        jwt.sign({ payload }, process.env.JWT_KEY, { expiresIn: '24h' },
             (err, token) => {
                 if (err) throw err;
                 res.status(200).json({
@@ -577,46 +577,62 @@ router.post("/quizresult", async (req, res) => {
     }
 })
 
-function addresult(data){
+async function addresult(data) {
+    const count_correct = 0;
+    var count_incorrect = 0;
+    var attempt = 0;
+
+    if (data.correct_ans == data.answer) {
+        count_correct = 1;
+    }
+    if (data.correct_ans != data.answer) {
+        count_incorrect = 1;
+    }
+    attempt = count_correct + count_incorrect;
+
     const neres = new quizresult({
         student_id: data.student_id,
         qset: data.qset,
         class: data.admin_id,
         subject: data.subject,
-        attempt: 2,
-        wrong: 1,
-        correct: 1
+        attempt: attempt,
+        wrong: count_incorrect,
+        correct: count_correct
     })
     const qr = neres.save();
-    return qr;   
+    //console.log(qr)
+    return qr;
 }
 
-function updateresult(data){   
-    const Details = {
-        student_id: data.student_id,
-        qset: data.qset,
-        class: data.admin_id,
-        subject: data.subject,
-        attempt: 15,
-        wrong: 1,
-        correct: 14 
+async function updateresult(data, storedRes) {
+    var count_correct = storedRes.correct;
+    var count_incorrect = storedRes.wrong;
+    var attempt = storedRes.attempt;
+
+    if (data.correct_ans == data.answer) {
+        count_correct = 1 + count_correct;
     }
-        //console.log(Details)
-    const check1 = quizresult.updateOne({ qset: data.qset }, {
-    $set:{
-        student_id: data.student_id,
-        qset: data.qset,
-        class: data.admin_id,
-        subject: data.subject,
-        attempt: 20,
-        wrong: 10,
-        correct: 10
+    if (data.correct_ans != data.answer) {
+        count_incorrect = 1 + count_incorrect;
+    }
+    attempt = count_correct + count_incorrect;
+
+    const check1 = await quizresult.updateOne({ qset: data.qset }, {
+        $set: {
+            student_id: data.student_id,
+            qset: data.qset,
+            class: data.admin_id,
+            subject: data.subject,
+            attempt: attempt,
+            wrong: count_incorrect,
+            correct: count_correct
         }
     })
-    return check1;   
+    //console.log(check1)  
+    return check1;
 }
 
-function addlog(data,resid){
+async function addlog(data, resid) {
     const log = new resultlog({
         result_id: data.result_id,
         student_id: data.student_id,
@@ -626,61 +642,62 @@ function addlog(data,resid){
         answer: data.answer,
         correct_ans: data.correct_ans,
     })
-    const lr = log.save();   
-    return lr;   
+    const lr = await log.save();
+    //console.log(lr)
+    return lr;
 }
 //Create quiz log
 router.post("/quizlog/add", async (req, res) => {
-    
+
     try {
         const check = await quizresult.findOne({ qset: req.body.qset })
-        console.log(check)
+        //console.log(check)
         var quizres = '';
-        if(check){
-         const ur = updateresult(req.body)
-         console.log(ur)
-            if(ur){
+        if (check) {
+            const ur = updateresult(req.body, check)
+            //console.log(ur)
+            if (ur) {
                 //console.log(ur)
 
-                addlog(req.body,check._id);
+                addlog(req.body, check._id);
                 quizres = 'data updated';
             }
-        }else{
+        } else {
             const isresult = addresult(req.body);
-            console.log(isresult)
-            if(isresult){
-                addlog(req.body,isresult._id);
+            //console.log(isresult)
+            if (isresult) {
+                addlog(req.body, isresult._id);
                 quizres = 'data added';
             }
-        } 
-        return res.status(200).json({ success: true, msg: quizres }) 
+        }
+        return res.status(200).json({ success: true, msg: quizres })
     } catch (err) {
         res.status(401).json({ success: false, msg: err.message })
     }
 })
 
 
-router.get("/quizlog/sum", async (req, res) => {
-    try {
-        const data1 = await resultlog.aggregate([{ $match: { $expr: { $eq: ["$answer", "$correct_ans"] } } }, // {$match: {$expr: {$ne: ["$answer", "$correct_ans"]}}},
+// router.get("/quizlog/sum", async (req, res) => {
+//     try {
+//         const data1 = await resultlog.aggregate([{ $match: { $expr: { $eq: ["$answer", "$correct_ans"] } } }, // {$match: {$expr: {$ne: ["$answer", "$correct_ans"]}}},
 
-        //{"$expr":{"$eq":["$answer"==="$correct_ans"]}},
+//         //{"$expr":{"$eq":["$answer"==="$correct_ans"]}},
 
-        {
-            $group: {
-                _id: "$student_id",
-                attempts: { $sum: 1 },
-                correct_ans: { $sum: 1 },
-            }
-        },
-            //{$where:"this.resultlog.answer === this.resultlog.correct_ans"}
-        ])
-        return res.status(200).json({ success: true, data: data1 })
-        //data.save()
-    } catch (err) {
-        return res.status(401).json({ success: false, msg: err.message })
-    }
-})
+//         {
+//             $group: {
+//                 _id: "$student_id",
+//                 attempts: { $sum: 1 },
+//                 correct_ans: { $sum: 1 },
+//             }
+//         },
+//             //{$where:"this.resultlog.answer === this.resultlog.correct_ans"}
+//         ])
+//         return res.status(200).json({ success: true, data: data1 })
+//         //data.save()
+//     } catch (err) {
+//         return res.status(401).json({ success: false, msg: err.message })
+//     }
+// })
 
 //db.collection.find({ "$expr": { "$eq": [ "$_id" , "$md5" ] } })
 
