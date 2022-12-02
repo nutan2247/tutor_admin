@@ -1,41 +1,25 @@
 const mongoose = require("mongoose")
 const chatSchema = mongoose.Schema({
-    Image:{
-        type:String,
-        required:true
-    },
-    student_name:{
-        type:String,
-        required:true
-    },
     student_id:{
-        type:Number,
+        type:mongoose.Types.ObjectId,
+        ref :'students',
         required:true
     },
-    contact_no:{
-        type:Number,
-        required:true
-    },
-    no_of_chat:{
-        type:Number,
-        required:true
-    },
-    new_chat:{
-        type:Number,
-        required:true
-    },
-    status:{
+    replay_to:{
         type:String,
         required:false
     },
-    action:{
+    message:{
         type:String,
         required:true
     },
+    isAdmin:{
+        type:Boolean,
+        default:false
+    },
     date:{
         type:Date,
-        default:Date.now(),
-        required:true
+        default:Date.now()
     }
 })
-module.exports = mongoose.model("Chat",chatSchema)
+module.exports = mongoose.model("chat",chatSchema)

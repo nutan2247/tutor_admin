@@ -1,9 +1,8 @@
 const express = require("express")
 const router = express.Router()
 const Chat = require("../models/chat")
-const Student = require("../models/student")
 const ChatReply = require("../models/chatreply")
-const checkToken = require('../middleware/check-token');
+const checkToken = require('../users/usermiddleware/verify_token')
 const upload = require('../models/chatImageFiles')
  
 
@@ -132,80 +131,36 @@ router.post("/chat/user", checkToken, async (req, res) => {
         return res.status(401).json({ success: false, msg: err.message })
     }
 })
+
 //message from Admin Side
-router.post("/chat/admin", async (req, res) => {
-    
-    if (Object.keys(req.body).length === 0) {
-        return res.status(402).json({ success: false, msg: "Message should not be blank" })
-      }
+router.post("/chatting/admin", async (req, res) => {
+    console.log('chatting');
     try {
-        
         const admin = await new Chat({
             student_id  : req.body.student_id,
             reply_to    : req.body.reply_to,
             message     : req.body.message,
+            reply_by    : req.body.reply_by,
             isAdmin     : true
         })
         admin.save();
         return res.status(200).json({ success: true, data: admin })
-
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })
     }
 })
 
-//GetAll chat of a Student
-router.post('/chat/list', async (req, res) => {
+
+//Get chat by student_id
+router.post('/chating/list', async (req, res) => {
     const student_id = req.body.student_id
     try {
-        const chatList = await Chat.find({ student_id });
-        const student = await Student.findOne({ _id: student_id });
-
-        const result = {
-            "student_name":student.name,
-            "student_photo":student.student_photo,
-            "chat":chatList
-        };
-        // Student
+        const result = await ChatReply.find({ student_id });
         return res.status(200).json({
             success: true,
             status: 200,
             msg: 'Chating List',
             data: result
-        })
-    }
-    catch (error) {
-        res.status(500).json({ success: false, message: error.message })
-    }
-});
-
-
-//GetAll chat of a Student
-router.get('/chat/getalllist', async (req, res) => {
-    try {
-        
-        const chatList = await Chat.find({  })
-        .populate({ path:'student_id',select:['name','student_photo'] });
-        // const chatList = await Chat.aggregate([ 
-        //     {
-        //         $lookup:
-        //         {
-        //             from: "students",
-        //             localField: "student_id",
-        //             foreignField: "_id",
-        //             as: "allList"
-        //         }
-        //       },
-        //       { 
-        //         $project: { "name": 0, "student_photo": 0 } 
-        //       }
-        // ])
-
-        return res.status(200).json({
-            success: true,
-            status: 200,
-            msg: 'Get All Chat',
-            data: chatList
         })
     }
     catch (error) {
