@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 const chatSchema = mongoose.Schema({
     student_id:{
         type:mongoose.Types.ObjectId,
-        ref :'students',
+        //ref :'students',
         required:true
     },
     replay_to:{

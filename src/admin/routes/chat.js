@@ -5,6 +5,7 @@ const Student = require("../models/student")
 const ChatReply = require("../models/chatreply")
 const checkToken = require('../middleware/check-token');
 const upload = require('../models/chatImageFiles')
+const mongoose = require('mongoose')
  
 
 
@@ -182,24 +183,24 @@ router.post('/chat/list', async (req, res) => {
 
 //GetAll chat of a Student
 router.get('/chat/getalllist', async (req, res) => {
+    const id = mongoose.Types.ObjectId
+
     try {
         
-        const chatList = await Chat.find({  })
-        .populate({ path:'student_id',select:['name','student_photo'] });
-        // const chatList = await Chat.aggregate([ 
-        //     {
-        //         $lookup:
-        //         {
-        //             from: "students",
-        //             localField: "student_id",
-        //             foreignField: "_id",
-        //             as: "allList"
-        //         }
-        //       },
-        //       { 
-        //         $project: { "name": 0, "student_photo": 0 } 
-        //       }
-        // ])
+        //const chatList = await Chat.find({  })
+        //.populate({ path:'student_id',select:['name','student_photo'] });
+        const chatList = await Chat.aggregate([{$match:{student_id:id}},{
+            
+                $lookup:
+                {
+                    from: "students",
+                    localField: "student_id",
+                    foreignField: "_id",
+                    as: "allList"
+                }
+            }, { $project: { "allList.father_name": 0, "allList.board":0, "allList.select_batch_time":0, "allList.mother_name":0, "allList.email":0, "allList.password":0, "allList.sex":0, "allList.mobile_number": 0, "allList.contact_number_father": 0, "allList.date_of_birth": 0, "allList.address": 0, "allList.payment_type": 0, "allList.fee_amount": 0, "allList.payment_mode": 0, "allList.roll_no": 0, "allList.session": 0, "allList.exam_seating": 0, "allList.login_code": 0, "allList.status": 0, "allList.added_at": 0, "allList.modified_at": 0, "allList.reg": 0, "allList.__v": 0, "allList.admin_id":0, "allList.date_of_admission":0} }
+
+    ])
 
         return res.status(200).json({
             success: true,
