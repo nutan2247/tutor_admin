@@ -31,7 +31,6 @@ const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
 const postQuizdata = require("../models/postquizdata")
-const quizScore = require("../models/quizScore")
 //const subject = require('../admin/models/subject');
 
 
@@ -43,6 +42,25 @@ const quizScore = require("../models/quizScore")
 // const questionsetques = require('../models/questionStudent')
 //const { ideahub } = require('googleapis/build/src/apis/ideahub');
 
+
+//function for postquizdata
+// async function quizdata(){
+// const count_correct_answer = 0;
+// const count_incorrect_answer = 0;
+// const total_question = 0;
+// quizScore.forEach(element => {
+//     const score = element.options.find(selected == 'show')
+//     if(!score){
+//         return
+//     }else{
+//         if(score?.correct == 'true'){
+//             count_correct_answer++
+//         }else{
+//             count_incorrect_answer++
+//         }
+//     }
+//   });
+// }
 
 
 
@@ -597,7 +615,7 @@ async function addresult(data) {
         qset: data.qset,
         class: data.admin_id,
         subject: data.subject,
-        attempt: attempt,
+        total_question: attempt,
         wrong: count_incorrect,
         correct: count_correct
     })
@@ -625,7 +643,7 @@ async function updateresult(data, storedRes) {
             qset: data.qset,
             class: data.admin_id,
             subject: data.subject,
-            attempt: attempt,
+            total_question: attempt,
             wrong: count_incorrect,
             correct: count_correct
         }
@@ -736,9 +754,10 @@ router.post("/quizlog", async (req, res) => {
 
 
 //quiz score Api
-router.get("/quiz/score",async(req,res)=>{
+router.get("/quiz/score/:_id",async(req,res)=>{
+    const id = req.params
     try{
-        const result = await quizScore.find({})
+        const result = await quiz.findOne({student_id:id})
         return res.status(200).json({success:true, data:result})
     }catch(err){
         return res.status(400).json({success:false, msg:err.message})
@@ -755,7 +774,7 @@ router.post('/quiz/data',async(req,res)=>{
             question:req.body.question
         })
         const finaldata = await data.save()
-        return res.status(200).json({success:true, data:finaldata})
+        return res.status(200).json({success:true, msg:'your data submit successfully'})
     }catch(err){
         return res.status(401).json({success:false, msg:err.message})
     }
