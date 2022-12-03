@@ -30,6 +30,8 @@ const PaymentLog = require("../admin/models/paymentLog")
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
+const postQuizdata = require("../models/postquizdata")
+const quizScore = require("../models/quizScore")
 //const subject = require('../admin/models/subject');
 
 
@@ -731,6 +733,33 @@ router.post("/quizlog", async (req, res) => {
     }
 })
 
+
+
+//quiz score Api
+router.get("/quiz/score",async(req,res)=>{
+    try{
+        const result = await quizScore.find({})
+        return res.status(200).json({success:true, data:result})
+    }catch(err){
+        return res.status(400).json({success:false, msg:err.message})
+    }
+})
+
+
+//post quiz data Api
+router.post('/quiz/data',async(req,res)=>{
+    try{
+        const data = new postQuizdata({
+            correct_answer:req.body.correct_answer,
+            wrong_answer:req.body.wrong_answer,
+            question:req.body.question
+        })
+        const finaldata = await data.save()
+        return res.status(200).json({success:true, data:finaldata})
+    }catch(err){
+        return res.status(401).json({success:false, msg:err.message})
+    }
+})
 
 module.exports = router
 
