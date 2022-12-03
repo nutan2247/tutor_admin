@@ -16,7 +16,7 @@ const QuizSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    attempt:{
+    total_question:{
         type:Number,
         required:true
     },
