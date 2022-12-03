@@ -11,6 +11,10 @@ const QuizSchema = mongoose.Schema({
     question:{
         type:Array,
         required:true
+    },
+    duration:{
+        type:String,
+        required:true
     }
 })
 module.exports= mongoose.model("PostQuizData", QuizSchema)

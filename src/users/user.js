@@ -755,6 +755,8 @@ router.post("/quizlog", async (req, res) => {
 
 //quiz score Api
 router.get("/quiz/score/:_id",async(req,res)=>{
+    const correct_answer = 0;
+    var msg="";
     const id = req.params
     try{
         const result = await quiz.findOne({student_id:id})
@@ -771,7 +773,8 @@ router.post('/quiz/data',async(req,res)=>{
         const data = new postQuizdata({
             correct_answer:req.body.correct_answer,
             wrong_answer:req.body.wrong_answer,
-            question:req.body.question
+            question:req.body.question,
+            duration:req.body.duration
         })
         const finaldata = await data.save()
         return res.status(200).json({success:true, msg:'your data submit successfully'})
