@@ -9,7 +9,7 @@ const topicSchema = mongoose.Schema({
         required: true
     },
     youtube_video:{
-        type:Array,
+        type:String,
         required:true
     },
     upload_document:{
