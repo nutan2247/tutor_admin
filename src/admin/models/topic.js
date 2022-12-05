@@ -8,6 +8,22 @@ const topicSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    youtube_video:{
+        type:Array,
+        required:true
+    },
+    upload_document:{
+        type:String,
+        required:true
+    },
+    class:{
+        type:String,
+        required:true
+    },
+    subject:{
+        type:String,
+        required:true
+    }
 });
 
 module.exports = mongoose.model('topic', topicSchema);

@@ -27,6 +27,7 @@ const question = require('../admin/models/question');
 const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
 const PaymentLog = require("../admin/models/paymentLog")
+const Topic = require("../admin/models/topic")
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
@@ -751,13 +752,31 @@ router.post("/quizlog", async (req, res) => {
     }
 })
 
+/*function gradeSystem(scoreP){
+    const grade = '';
+    if(scoreP < 35){
+        grade = 'Fail';
+    }elseif(scoreP >= 35 && scoreP < 50 ){
+        grade = 'Good';
+    }
 
+    return grade;
+35 < && > 50 Good
+50 < && > 70 Better
+70 < && > 90 Best
+90 < && > 100 Excellent!
+
+}*/
 
 //quiz score Api
 router.get("/quiz/score/:_id",async(req,res)=>{
+    const correct_answer = 0;
+    var msg="";
     const id = req.params
     try{
-        const result = await quiz.findOne({student_id:id})
+        const result = await quiz.find({student_id:id});
+
+        /** co = 55; co = gradeSystem(55) */
         return res.status(200).json({success:true, data:result})
     }catch(err){
         return res.status(400).json({success:false, msg:err.message})
@@ -771,12 +790,24 @@ router.post('/quiz/data',async(req,res)=>{
         const data = new postQuizdata({
             correct_answer:req.body.correct_answer,
             wrong_answer:req.body.wrong_answer,
-            question:req.body.question
+            question:req.body.question,
+            duration:req.body.duration
         })
         const finaldata = await data.save()
         return res.status(200).json({success:true, msg:'your data submit successfully'})
     }catch(err){
         return res.status(401).json({success:false, msg:err.message})
+    }
+})
+
+
+router.post("/topic",checktoken, async(req,res)=>{
+    const class_id = req.body.class
+    try{
+        const data = await Topic.find({class:class_id})
+        return res.status(200).json({success:true, data:data})
+    }catch(err){
+        return res.status(401).json({success:false, err:err.message})
     }
 })
 
