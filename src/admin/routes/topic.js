@@ -2,6 +2,7 @@ const express = require('express');
 const Topic = require('../models/topic');
 const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
+const upload = require("../models/topicUploaddocument")
 const router = express.Router();
 
 
@@ -24,11 +25,19 @@ router.get('/topic/list', checkToken, async (req, res) => {
 
 
 // ** Add Batches** //
-router.post('/topic/add', checkToken, async (req, res) => {
+router.post('/topic/add', checkToken, upload, async (req, res) => {
+    
+    if (req.file) {
+        upload_document = req.file.path
+    }
     try {
         const data = new Topic({
             name: req.body.name,
             status: req.body.status,
+            youtube_video:req.body.youtube_video,
+            upload_document:req.file.path,
+            class:req.body.class,
+            subject:req.body.subject,
             addedat: new Date()
         })
         data
