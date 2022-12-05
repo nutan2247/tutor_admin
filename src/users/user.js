@@ -496,7 +496,7 @@ router.post("/quiz/question/list", checktoken, async (req, res) => {
             }
         }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
         ])
-        return res.status(200).json({ success: true, result:ques[0] }),
+        return res.status(200).json({ success: true, result: ques[0] }),
             console.log(ques)
     } catch (error) {
         return res.status(401).json({ success: false, message: error.message })
@@ -698,48 +698,7 @@ router.post("/quizlog/add", async (req, res) => {
 })
 
 
-// router.get("/quizlog/sum", async (req, res) => {
-//     try {
-//         const data1 = await resultlog.aggregate([{ $match: { $expr: { $eq: ["$answer", "$correct_ans"] } } }, // {$match: {$expr: {$ne: ["$answer", "$correct_ans"]}}},
 
-//         //{"$expr":{"$eq":["$answer"==="$correct_ans"]}},
-
-//         {
-//             $group: {
-//                 _id: "$student_id",
-//                 attempts: { $sum: 1 },
-//                 correct_ans: { $sum: 1 },
-//             }
-//         },
-//             //{$where:"this.resultlog.answer === this.resultlog.correct_ans"}
-//         ])
-//         return res.status(200).json({ success: true, data: data1 })
-//         //data.save()
-//     } catch (err) {
-//         return res.status(401).json({ success: false, msg: err.message })
-//     }
-// })
-
-//db.collection.find({ "$expr": { "$eq": [ "$_id" , "$md5" ] } })
-
-//     try {
-//         const data1 = await resultlog.find();
-
-//         // var details = {
-//         //      student_id :data1[0].student_id,
-//         //      admin_id : data1[0].admin_id,
-//         //      subject : data1[0].subject,
-//         //     att : data1.length,
-//         //     cor : 5,
-//         //     incorr : 2,
-//         //     per : 60
-//         // }
-//         return res.status(200).json({ success: true, data: details })
-//         //data.save()
-//     } catch (err) {
-//         return res.status(401).json({ success: false, msg: err.message })
-//     }
-// })
 //quiz log Api
 router.post("/quizlog", async (req, res) => {
     const { student_id, admin_id, subject } = req.body
@@ -752,62 +711,80 @@ router.post("/quizlog", async (req, res) => {
     }
 })
 
-/*function gradeSystem(scoreP){
+function gradeSystem(scoreP) {
     const grade = '';
-    if(scoreP < 35){
+    if (scoreP < 35) {
         grade = 'Fail';
-    }elseif(scoreP >= 35 && scoreP < 50 ){
+    } else if(scoreP >= 35 && scoreP < 50){
         grade = 'Good';
+    } else if(scoreP >= 50 && scoreP < 70){
+        grade = 'Better';
+    } else if(scoreP >= 70 && scoreP < 90){
+        grade = 'Best';
+    } else if(scoreP >= 90 && scoreP < 100){
+        grade = 'Excellent';
+    }else {
+        return grade;
     }
-
-    return grade;
-35 < && > 50 Good
-50 < && > 70 Better
-70 < && > 90 Best
-90 < && > 100 Excellent!
-
-}*/
+}
 
 //quiz score Api
-router.get("/quiz/score/:_id",async(req,res)=>{
-    const correct_answer = 0;
-    var msg="";
+router.get("/quiz/score/:_id", async (req, res) => {
+    //const correct_answer = 0;
+    var msg = "";
     const id = req.params
-    try{
-        const result = await quiz.find({student_id:id});
-
+    try {
+        const result = await quiz.find({ student_id: id });
+        var totalscore=[]
+        for (const [_, value] of Object.entries(result)) {
+            const Score = {
+                student_id:value.student_id,
+                qset:value.qset,
+                class:value.class,
+                subject:value.subject,
+                duration:value.duration,
+                correct:value.correct,
+                wrong:value.wrong,
+                total_question:value.total_question
+            }
+            totalscore.push(Score)
+        }
+        const totalS = gradeSystem(55)
+        console.log(totalS)
         /** co = 55; co = gradeSystem(55) */
-        return res.status(200).json({success:true, data:result})
-    }catch(err){
-        return res.status(400).json({success:false, msg:err.message})
+        return res.status(200).json({ success: true, data: result })
+    } catch (err) {
+        return res.status(400).json({ success: false, msg: err.message })
     }
 })
 
 
 //post quiz data Api
-router.post('/quiz/data',async(req,res)=>{
-    try{
+router.post('/quiz/data', async (req, res) => {
+    try {
         const data = new postQuizdata({
-            correct_answer:req.body.correct_answer,
-            wrong_answer:req.body.wrong_answer,
-            question:req.body.question,
-            duration:req.body.duration
+            correct_answer: req.body.correct_answer,
+            wrong_answer: req.body.wrong_answer,
+            question: req.body.question,
+            duration: req.body.duration
         })
         const finaldata = await data.save()
-        return res.status(200).json({success:true, msg:'your data submit successfully'})
-    }catch(err){
-        return res.status(401).json({success:false, msg:err.message})
+        return res.status(200).json({ success: true, msg: 'your data submit successfully' })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
     }
 })
 
 
-router.post("/topic",checktoken, async(req,res)=>{
+router.post("/topic", checktoken, async (req, res) => {
     const class_id = req.body.class
-    try{
-        const data = await Topic.find({class:class_id})
-        return res.status(200).json({success:true, data:data})
-    }catch(err){
-        return res.status(401).json({success:false, err:err.message})
+    try {
+        const data = await Topic.find({ class: class_id })
+        const jp = JSON.parse(JSON.stringify(data))
+        console.log(jp)
+        return res.status(200).json({ success: true, data: jp })
+    } catch (err) {
+        return res.status(401).json({ success: false, err: err.message })
     }
 })
 
