@@ -28,6 +28,7 @@ const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
 const PaymentLog = require("../admin/models/paymentLog")
 const Topic = require("../admin/models/topic")
+
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
@@ -712,47 +713,52 @@ router.post("/quizlog", async (req, res) => {
 })
 
 function gradeSystem(scoreP) {
-    const grade = '';
+    var grade = '';
     if (scoreP < 35) {
         grade = 'Fail';
-    } else if(scoreP >= 35 && scoreP < 50){
+    } else if (scoreP >= 35 && scoreP < 50) {
         grade = 'Good';
-    } else if(scoreP >= 50 && scoreP < 70){
+    } else if (scoreP >= 50 && scoreP < 70) {
         grade = 'Better';
-    } else if(scoreP >= 70 && scoreP < 90){
+    } else if (scoreP >= 70 && scoreP < 90) {
         grade = 'Best';
-    } else if(scoreP >= 90 && scoreP < 100){
+    } else if (scoreP >= 90 && scoreP < 100) {
         grade = 'Excellent';
-    }else {
-        return grade;
+    } else {
+        grade = '';
     }
+    return grade;
 }
 
 //quiz score Api
 router.get("/quiz/score/:_id", async (req, res) => {
-    //const correct_answer = 0;
+    const correct_answer = 0;
     var msg = "";
     const id = req.params
     try {
         const result = await quiz.find({ student_id: id });
-        var totalscore=[]
+        const totalscore = []
         for (const [_, value] of Object.entries(result)) {
+            const pers = (parseInt(value.correct) * 100)/parseInt(value.total_question);
+            var grade = gradeSystem(pers); 
+            console.log(grade,pers);
             const Score = {
-                student_id:value.student_id,
-                qset:value.qset,
-                class:value.class,
-                subject:value.subject,
-                duration:value.duration,
-                correct:value.correct,
-                wrong:value.wrong,
-                total_question:value.total_question
+                student_id: value.student_id,
+                qset: value.qset,
+                class: value.class,
+                subject: value.subject,
+                duration: value.duration,
+                correct: value.correct,
+                wrong: value.wrong,
+                total_question: value.total_question,
+                grade : grade 
             }
             totalscore.push(Score)
         }
-        const totalS = gradeSystem(55)
-        console.log(totalS)
+        // const totalS = gradeSystem(55)
+        // console.log(totalS)
         /** co = 55; co = gradeSystem(55) */
-        return res.status(200).json({ success: true, data: result })
+        return res.status(200).json({ success: true, data: totalscore })
     } catch (err) {
         return res.status(400).json({ success: false, msg: err.message })
     }
@@ -780,13 +786,14 @@ router.post("/topic", checktoken, async (req, res) => {
     const class_id = req.body.class
     try {
         const data = await Topic.find({ class: class_id })
-        const jp = JSON.parse(JSON.stringify(data))
-        console.log(jp)
-        return res.status(200).json({ success: true, data: jp })
+        //const jp = JSON.parse(JSON.stringify(data))
+        //console.log(jp)
+        return res.status(200).json({ success: true, data: data })
     } catch (err) {
         return res.status(401).json({ success: false, err: err.message })
     }
 })
+
 
 module.exports = router
 
