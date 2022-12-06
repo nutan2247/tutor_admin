@@ -2,7 +2,7 @@ const express = require('express');
 const Topic = require('../models/topic');
 const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
-const upload = require("../models/topicUploaddocument")
+const upload1 = require("../models/topicUploaddocument")
 const router = express.Router();
 
 
@@ -25,20 +25,18 @@ router.get('/topic/list', checkToken, async (req, res) => {
 
 
 // ** Add Batches** //
-router.post('/topic/add', checkToken, upload, async (req, res) => {
+router.post('/topic/add', checkToken, upload1, async (req, res) => {
     
     if (req.file) {
         upload_document = req.file.path
     }
     try {
         const data = new Topic({
-            name: req.body.name,
-            status: req.body.status,
-            youtube_video:req.body.youtube_video,
-            upload_document:req.file.path,
-            class:req.body.class,
-            subject:req.body.subject,
-            addedat: new Date()
+           chapter_id:req.body.chapter_id,
+           subject_id:req.body.subject_id,
+           upload_video:req.body.upload_video,
+           upload_pdf:req.file.path,
+           status:req.body.status
         })
         data
             .save()
@@ -61,16 +59,28 @@ router.post('/topic/add', checkToken, upload, async (req, res) => {
 });
 
 
-//Batches Edit
-router.patch('/topic/update/:_id', checkToken, (req, res, next) => {
+//Topic Edit
+router.patch('/topic/update/:_id', checkToken, upload1, async (req, res, next) => {
+    const _id = req.params._id;
 
-    Topic.findByIdAndUpdate(req.params._id, req.body, (err, emp) => {
-        if (err) {
-            return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
-        };
-        res.send({ success: true, msg: "Update successfull" });
-    })
-});
+    if (req.file) {
+        upload_pdf = req.file.path
+    }
+    try {
+        await Topic.findByIdAndUpdate({ _id }, {
+            $set: {
+                chapter_id: req.body.chapter_id,
+                student_id: req.body.student_id,
+                upload_video: req.body.upload_video,
+                upload_pdf: req.file.path,
+                status:req.body.status
+            },
+        }), res.send({ success: true, msg: "Update successfull" });
+
+    } catch (error) {
+        return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
+    }
+})
 
 //Delete Batches
 router.delete('/topic/delete/:_id', checkToken, (req, res, next) => {

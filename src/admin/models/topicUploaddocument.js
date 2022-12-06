@@ -13,7 +13,7 @@ const Storage = multer.diskStorage({
     }
     })
 
-const upload = multer({
+const upload1 = multer({
     storage : Storage,
     fileFilter : function(req, file, cb) {
         switch (file.mimetype) {
@@ -29,6 +29,6 @@ const upload = multer({
     // limits : {
     //     fileSize: 1024 * 1024 * 2
     // }
-}).single('upload_document')  //field name where this image/pdf file save in database
+}).single('upload_pdf')  //field name where this image/pdf file save in database
 
-module.exports = upload
+module.exports = upload1

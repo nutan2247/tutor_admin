@@ -94,6 +94,10 @@ router.delete('/student/delete/:_id', auth, (req, res, next) => {
 
 
 
+
+
+
+
 // **** All Class List **** //
 router.get('/class/list', auth, async (req, res) => {
     try {
@@ -105,7 +109,7 @@ router.get('/class/list', auth, async (req, res) => {
         })
     }
     catch (error) {
-        res.status(500).json({ message: error.message })
+        res.status(500).json({success:false, message: error.message })
     }
 })
 
@@ -113,10 +117,8 @@ router.get('/class/list', auth, async (req, res) => {
 router.post('/class/add', auth, async (req, res) => {
     try {
         const data = new Class({
-            _id: new mongoose.Types.ObjectId,
-            class_id: req.body.class_id,
             class_name: req.body.class_name,
-            status: 1
+            status: req.body.status
         })
         data
             .save()
@@ -156,6 +158,10 @@ router.delete('/class/delete/:_id', auth, (req, res, next) => {
             res.status(500).json({ success: false, msg: err });
         });
 });
+
+
+
+
 
 // **** All Department List **** //
 router.get('/department/list', auth, async (req, res) => {
