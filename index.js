@@ -38,7 +38,7 @@ const noticeRouter = require("./src/admin/routes/noticeBoard")
 const chatRouter = require("./src/admin/routes/chat")
 const contactRouter = require("./src/admin/routes/contactus")
 const router = require('./src/users/user');
-//const tutor = require('./src/users/login')
+const userchat = require('./src/users/chat')
 
 app.listen(3000,()=>{
     console.log(`Welcome Admin, Server Started at ${3000}`)
@@ -47,6 +47,7 @@ app.listen(3000,()=>{
 //app.use("/",tutor)
 app.use("/api",router)
 app.use("/api",routes)
+app.use("/api",userchat)
 app.use("/admin",adminAuth)
 app.use("/admin",adminRoutes)
 app.use("/admin",bannerRoutes)
