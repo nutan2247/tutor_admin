@@ -16,7 +16,7 @@ const Subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
 const Class = require('../admin/models/class')
 const upload = require('../models/uploadimage')
-const watchlatest = require('../models/watchlatest')
+// const watchlatest = require('../models/watchlatest')
 const Notification = require("../models/Notifications")
 const checkBox = require("../admin/models/SubjectCheckbox")
 //const Setting = require('../models/contact_us');
@@ -375,18 +375,18 @@ router.post('/student_objectid', checktoken, async (req, res) => {
 })
 
 
-//Watch latest api
-router.get('/watch_latest', checktoken, async (req, res) => {
-    try {
-        const Watch = await watchlatest.find({ status: 1 })
-        res.status(200).json({ success: true, Watch })
+// //Watch latest api
+// router.get('/watch_latest', checktoken, async (req, res) => {
+//     try {
+//         const Watch = await watchlatest.find({ status: 1 })
+//         res.status(200).json({ success: true, Watch })
 
 
-    } catch (error) {
-        res.status(500).json({ succes: false, message: error.message })
+//     } catch (error) {
+//         res.status(500).json({ succes: false, message: error.message })
 
-    }
-})
+//     }
+// })
 
 
 //Subject api
@@ -588,11 +588,11 @@ router.post("/payment/history", async (req, res) => {
     }
 })
 
-//quiz result Api
+// //quiz result Api
 router.post("/quizresult", async (req, res) => {
-    const question_no = req.body.question_no
+    const ques_no = req.body.ques_no
     try {
-        const result = await quiz.find({ question_no })
+        const result = await resultlog.find({ ques_no })
         return res.status(200).json({ success: true, data: result })
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })

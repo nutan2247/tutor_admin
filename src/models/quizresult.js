@@ -4,7 +4,7 @@ const QuizSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    qset:{ //Question set
+    qset:{ //Question set objectid
         type:String,
         required:true
     },
