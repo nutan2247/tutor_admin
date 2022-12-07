@@ -13,12 +13,32 @@ const router = express.Router();
 // **** Get All Chapters List **** //
 router.get('/chapter/list', checkToken, async (req, res) => {
     try {
-        const result = await Chapter.find();
+        var resultArr = [];
+        const Allchapter = await Chapter.find();
+        for (const [_, value] of Object.entries(Allchapter)) {
+            const subjectdata = await Subject.findOne({_id:value.subject_id});
+            console.log(subjectdata)
+            const classdata = await Class.findOne({_id:value.class_id});
+
+            var chapter = {
+                topic_id: value._id,
+                class_id: value.class_id,
+                class_name: classdata.class_name,
+                subject_id: value.subject_id,
+                subject_name: subjectdata.subject_name,
+                board:value.board,
+                language:value.language,
+                chapter_title:value.chapter_title,
+                date: value.date,
+                status: value.status,
+            };
+            resultArr.push(chapter);
+        }
         return res.status(200).json({
             success: true,
-            count: result.length,
+            count: resultArr.length,
             msg: 'Chapter List',
-            data: result
+            data: resultArr
         })
     }
     catch (error) {
