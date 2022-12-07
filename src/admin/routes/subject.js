@@ -21,7 +21,7 @@ router.get('/chapter/list', checkToken, async (req, res) => {
             const classdata = await Class.findOne({_id:value.class_id});
 
             var chapter = {
-                topic_id: value._id,
+                _id: value._id,
                 class_id: value.class_id,
                 class_name: classdata.class_name,
                 subject_id: value.subject_id,
