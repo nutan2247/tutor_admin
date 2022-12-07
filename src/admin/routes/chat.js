@@ -188,21 +188,26 @@ router.get('/chat/getalllist', checkToken, async (req, res) => {
     try {
         
         /** const chatList = await Chat.find({  })
-         .populate({ path:'student_id',select:['name','student_photo'] }); */
+         .populate({ path:'student_id',select:['name','student_photo'] });
+         
+         db.table_1.aggregate([
+            {$group : {_id : {email: "$email", type:"$type"},total: { $sum: "$amount" }}},
+            {$lookup: {from: "table_2", localField: "_id.email", foreignField: "email", as: "details"}},
+            {$match: {details: {$ne: []}}}
+        ]);
+
+*/
         const chatList = await Chat.aggregate([
             {
-                $group:{_id:{student_id:'$student_id', message:'$message', isAdmin:'$isAdmin', date:'$date', _id:'$_id'}}
+                $group:{_id:{student_id:'$student_id'}}
             },
-            
-            {
-                $match:{student_id:id}
-            },
+            { $match:{student_id:id} },
             
             {
                 $lookup:
                 {
                     from: "students",
-                    localField: "student_id",
+                    localField: "_id.student_id",
                     foreignField: "_id",
                     as: "studentInfo"
                 }
@@ -214,7 +219,7 @@ router.get('/chat/getalllist', checkToken, async (req, res) => {
                     "studentInfo.father_name": 0, "studentInfo.board":0, "studentInfo.select_batch_time":0, "studentInfo.mother_name":0, "studentInfo.email":0, "studentInfo.password":0, "studentInfo.sex":0, "studentInfo.contact_number_father": 0, "studentInfo.date_of_birth": 0, "studentInfo.address": 0, "studentInfo.payment_type": 0, "studentInfo.fee_amount": 0, "studentInfo.payment_mode": 0, "studentInfo.roll_no": 0, "studentInfo.session": 0, "studentInfo.exam_seating": 0, "studentInfo.login_code": 0, "studentInfo.status": 0, "studentInfo.added_at": 0, "studentInfo.modified_at": 0, "studentInfo.reg": 0, "studentInfo.__v": 0, "studentInfo.admin_id":0, "studentInfo.date_of_admission":0
                 } 
             }
-        ]).sort({_id:1});
+        ]);
 
         return res.status(200).json({
             success: true,
