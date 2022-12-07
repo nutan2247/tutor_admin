@@ -37,6 +37,7 @@ const notificationRouter = require("./src/admin/routes/notification")
 const noticeRouter = require("./src/admin/routes/noticeBoard")
 const chatRouter = require("./src/admin/routes/chat")
 const contactRouter = require("./src/admin/routes/contactus")
+const watchRouter = require("./src/admin/routes/watchlatest")
 const router = require('./src/users/user');
 const userchat = require('./src/users/chat')
 
@@ -64,3 +65,4 @@ app.use("/admin",notificationRouter)
 app.use("/admin",noticeRouter)
 app.use("/admin",chatRouter)
 app.use("/admin",contactRouter)
+app.use("/admin",watchRouter)

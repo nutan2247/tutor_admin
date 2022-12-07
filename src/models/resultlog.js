@@ -8,6 +8,10 @@ const resultSchema = mongoose.Schema({
         type:String,
         required:true
     },
+    qset:{ //Question set objectid
+        type:String,
+        required:true
+    },
     admin_id:{
         type:String,
         required:true

@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 
 const watchSchema = mongoose.Schema({
-    Url : {
-        type : String,
-        required : true
+    class_id:{
+        type:String,
+        required:true
     },
-    Topic : {
+    video_url : {
         type : String,
         required : true
     },

@@ -5,6 +5,7 @@ const Department = require('../models/department');
 const Chapter = require('../models/chapter');
 const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
+const { validationResult } = require('express-validator');
 //const chapter = require('../models/chapter');
 const router = express.Router();
 
@@ -91,12 +92,25 @@ router.delete('/chapter/delete/:_id', checkToken, (req, res, next) => {
 // **** Get All Subject List **** //
 router.get('/subject/list', checkToken, async (req, res) => {
     try {
-        const result = await Subject.find();
+        var resultArr = [];
+        const Allsubject = await Subject.find();
+        for (const [_, value] of Object.entries(Allsubject)) {
+            const classdata = await Class.findOne({_id:value.class_id});
+            var subject = {
+                class_id: value.class_id,
+                class_name: classdata.class_name,
+                subject_id: value._id,
+                subject_name: value.subject_name,
+                status: value.status,
+                date: value.date,
+            };
+            resultArr.push(subject);
+        }
         return res.status(200).json({
             success: true,
-            count: result.length,
+           // count: result.length,
             msg: 'Subject List',
-            data: result
+            data: resultArr
         })
     }
     catch (error) {
