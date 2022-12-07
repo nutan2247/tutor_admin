@@ -2,6 +2,9 @@ const express = require('express');
 const Topic = require('../models/topic');
 const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
+const Class = require("../models/class")
+const Subject = require("../models/subject")
+
 const upload1 = require("../models/topicUploaddocument")
 const router = express.Router();
 
@@ -9,13 +12,31 @@ const router = express.Router();
 // **** Get All Topic List **** //
 router.get('/topic/list', checkToken, async (req, res) => {
     try {
-        const result = await Topic.find();
+        var resultArr = [];
+        const Alltopic = await Topic.find();
+
+        for (const [_, value] of Object.entries(Alltopic)) {
+            const subjectdata = await Subject.findOne({_id:value.subject_id});
+            const classdata = await Class.findOne({_id:subjectdata.class_id});
+
+            var topic = {
+                topic_id: value._id,
+                class_id: subjectdata.class_id,
+                class_name: classdata.class_name,
+                subject_id: value.subject_id,
+                subject_name: subjectdata.subject_name,
+                upload_pdf:value.upload_pdf,
+                date: value.date,
+                status: value.status,
+            };
+            resultArr.push(topic);
+        }
         return res.status(200).json({
             success: true,
             status: 200,
-            count: result.length,
+            count: resultArr.length,
             msg: 'Topics List',
-            data: result
+            data: resultArr
         })
     }
     catch (error) {
