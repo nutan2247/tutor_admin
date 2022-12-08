@@ -90,6 +90,8 @@ router.patch('/topic/update/:_id', checkToken, upload1, async (req, res, next) =
         upload_document = req.file.path
     }
     try {
+        const singleTopic = await Topic.findById({ _id });
+
         await Topic.findByIdAndUpdate({ _id }, {
             $set: {
                 topic_name: req.body.topic_name,
@@ -99,7 +101,8 @@ router.patch('/topic/update/:_id', checkToken, upload1, async (req, res, next) =
                 upload_pdf: req.file.path,
                 status:req.body.status
             },
-        }), res.send({ success: true, msg: "Update successfull" });
+        }), 
+        res.send({ success: true, msg: "Update successfull" });
 
     } catch (error) {
         return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
