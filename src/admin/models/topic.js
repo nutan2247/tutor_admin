@@ -8,6 +8,10 @@ const topicSchema = mongoose.Schema({
     type:String,
     required:true
    },
+   topic_name:{
+    type:String,
+    required:false
+   },
    upload_video:{
     type:String,
     required:false

@@ -21,6 +21,7 @@ router.get('/topic/list', checkToken, async (req, res) => {
 
             var topic = {
                 topic_id: value._id,
+                topic_name: value.topic_name,
                 class_id: subjectdata.class_id,
                 class_name: classdata.class_name,
                 subject_id: value.subject_id,
@@ -53,6 +54,7 @@ router.post('/topic/add', checkToken, upload1, async (req, res) => {
     }
     try {
         const data = new Topic({
+           topic_name:req.body.topic_name,
            chapter_id:req.body.chapter_id,
            subject_id:req.body.subject_id,
            upload_video:req.body.upload_video,
@@ -85,13 +87,14 @@ router.patch('/topic/update/:_id', checkToken, upload1, async (req, res, next) =
     const _id = req.params._id;
 
     if (req.file) {
-        upload_pdf = req.file.path
+        upload_document = req.file.path
     }
     try {
         await Topic.findByIdAndUpdate({ _id }, {
             $set: {
+                topic_name: req.body.topic_name,
                 chapter_id: req.body.chapter_id,
-                student_id: req.body.student_id,
+                subject_id: req.body.subject_id,
                 upload_video: req.body.upload_video,
                 upload_pdf: req.file.path,
                 status:req.body.status
