@@ -26,7 +26,7 @@ const upload1 = multer({
                  break;
        }
     },
-    // limits : {
+    // limits : { 
     //     fileSize: 1024 * 1024 * 2
     // }
 }).single('upload_pdf')  //field name where this image/pdf file save in database
