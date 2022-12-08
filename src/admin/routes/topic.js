@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
 const Class = require("../models/class")
 const Subject = require("../models/subject")
+const Chapter = require('../models/chapter');
 
 const upload1 = require("../models/topicUploaddocument")
 const router = express.Router();
@@ -16,13 +17,17 @@ router.get('/topic/list', checkToken, async (req, res) => {
         const Alltopic = await Topic.find();
 
         for (const [_, value] of Object.entries(Alltopic)) {
+            console.log(value);
             const subjectdata = await Subject.findOne({_id:value.subject_id});
             const classdata = await Class.findOne({_id:subjectdata.class_id});
+            const chapterdata = await Chapter.findOne({_id:value.chapter_id});
 
             var topic = {
                 topic_id: value._id,
                 topic_name: value.topic_name,
                 class_id: subjectdata.class_id,
+                chapter_id: chapterdata._id,
+                chapter_name: chapterdata.chapter_title,
                 class_name: classdata.class_name,
                 subject_id: value.subject_id,
                 subject_name: subjectdata.subject_name,
