@@ -12,7 +12,7 @@ const resultSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    admin_id:{
+    class_id:{
         type:String,
         required:true
     },

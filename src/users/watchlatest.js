@@ -3,7 +3,7 @@ const watchlatest = require('../models/watchlatest');
 const Subject = require("../admin/models/subject")
 const Chapter = require('../admin/models/chapter');
 const Topic=require("../admin/models/topic")
-const checkToken = require('../admin/middleware/check-token');
+const checktoken = require('../users/usermiddleware/verify_token')
 const router = express.Router();
 
 // router.post("/watchlatest",checkToken,async(req,res)=>{
@@ -21,7 +21,7 @@ const router = express.Router();
 // })
 
 
-router.post("/watchlatest/list",checkToken,async(req,res)=>{
+router.post("/watchlatest/list",checktoken,async(req,res)=>{
     const {class_id} = req.body
     try{
         const subjectList = await Subject.find({ class_id })
