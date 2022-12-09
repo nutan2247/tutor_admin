@@ -181,7 +181,7 @@ router.post("/chat/admin", checkToken, async (req, res) => {
     }
 })
 
-/** GetAll chat of a Student */
+/** GetAll chat of All Students */
 router.get('/chat/getalllist', checkToken, async (req, res) => {
     const id = mongoose.Types.ObjectId
 
@@ -216,7 +216,7 @@ router.get('/chat/getalllist', checkToken, async (req, res) => {
             { 
                 $project: 
                 { 
-                    "studentInfo.father_name": 0, "studentInfo.board":0, "studentInfo.select_batch_time":0, "studentInfo.mother_name":0, "studentInfo.email":0, "studentInfo.password":0, "studentInfo.sex":0, "studentInfo.mobile_number": 0, "studentInfo.contact_number_father": 0, "studentInfo.date_of_birth": 0, "studentInfo.address": 0, "studentInfo.payment_type": 0, "studentInfo.fee_amount": 0, "studentInfo.payment_mode": 0, "studentInfo.roll_no": 0, "studentInfo.session": 0, "studentInfo.exam_seating": 0, "studentInfo.login_code": 0, "studentInfo.status": 0, "studentInfo.added_at": 0, "studentInfo.modified_at": 0, "studentInfo.reg": 0, "studentInfo.__v": 0, "studentInfo.admin_id":0, "studentInfo.date_of_admission":0
+                    "studentInfo.father_name": 0, "studentInfo.board":0, "studentInfo.select_batch_time":0, "studentInfo.mother_name":0, "studentInfo.email":0, "studentInfo.password":0, "studentInfo.sex":0, "studentInfo.contact_number_father": 0, "studentInfo.date_of_birth": 0, "studentInfo.address": 0, "studentInfo.payment_type": 0, "studentInfo.fee_amount": 0, "studentInfo.payment_mode": 0, "studentInfo.roll_no": 0, "studentInfo.session": 0, "studentInfo.exam_seating": 0, "studentInfo.login_code": 0, "studentInfo.status": 0, "studentInfo.added_at": 0, "studentInfo.modified_at": 0, "studentInfo.reg": 0, "studentInfo.__v": 0, "studentInfo.admin_id":0, "studentInfo.date_of_admission":0
                 } 
             }
         ]);
@@ -226,6 +226,23 @@ router.get('/chat/getalllist', checkToken, async (req, res) => {
             status: 200,
             msg: 'Get All Chat',
             data: chatList
+        })
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message })
+    }
+});
+
+/** All chat with single student  */
+router.get('/chat/list/:student_id',  async (req, res) => {
+    const student_id = req.params.student_id
+    try {
+        const result = await Chat.find({student_id});
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            msg: 'Chat List',
+            data: result
         })
     }
     catch (error) {

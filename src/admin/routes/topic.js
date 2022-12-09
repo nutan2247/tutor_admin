@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
 const Class = require("../models/class")
 const Subject = require("../models/subject")
+const Chapter = require('../models/chapter');
 
 const upload1 = require("../models/topicUploaddocument")
 const router = express.Router();
@@ -16,13 +17,21 @@ router.get('/topic/list', checkToken, async (req, res) => {
         const Alltopic = await Topic.find();
 
         for (const [_, value] of Object.entries(Alltopic)) {
+            console.log(value);
             const subjectdata = await Subject.findOne({_id:value.subject_id});
             const classdata = await Class.findOne({_id:subjectdata.class_id});
+<<<<<<< HEAD
             // console.log(classdata)
+=======
+            const chapterdata = await Chapter.findOne({_id:value.chapter_id});
+>>>>>>> 1408c8aa16304b799b99dd0cd85522004817b2d8
 
             var topic = {
                 topic_id: value._id,
+                topic_name: value.topic_name,
                 class_id: subjectdata.class_id,
+                chapter_id: chapterdata._id,
+                chapter_name: chapterdata.chapter_title,
                 class_name: classdata.class_name,
                 subject_id: value.subject_id,
                 subject_name: subjectdata.subject_name,
@@ -54,6 +63,7 @@ router.post('/topic/add', checkToken, upload1, async (req, res) => {
     }
     try {
         const data = new Topic({
+           topic_name:req.body.topic_name,
            chapter_id:req.body.chapter_id,
            subject_id:req.body.subject_id,
            upload_video:req.body.upload_video,
@@ -86,18 +96,22 @@ router.patch('/topic/update/:_id', checkToken, upload1, async (req, res, next) =
     const _id = req.params._id;
 
     if (req.file) {
-        upload_pdf = req.file.path
+        upload_document = req.file.path
     }
     try {
+        const singleTopic = await Topic.findById({ _id });
+
         await Topic.findByIdAndUpdate({ _id }, {
             $set: {
+                topic_name: req.body.topic_name,
                 chapter_id: req.body.chapter_id,
-                student_id: req.body.student_id,
+                subject_id: req.body.subject_id,
                 upload_video: req.body.upload_video,
                 upload_pdf: req.file.path,
                 status:req.body.status
             },
-        }), res.send({ success: true, msg: "Update successfull" });
+        }), 
+        res.send({ success: true, msg: "Update successfull" });
 
     } catch (error) {
         return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
