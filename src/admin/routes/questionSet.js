@@ -27,23 +27,16 @@ router.get('/questionSet/list',checkToken, async (req, res) => {
 router.post('/questionSet/add',checkToken, async (req, res) => {
     try{
         const data = new questionSet({
-            //_id: new mongoose.Types.ObjectId,
-            //qps_id: req.body.qps_id,
-            chapter_name: req.body.chapter_name,
-            admin_id: req.body.admin_id,
-            subject:req.body.subject,
+            class_id: req.body.class_id,
+            subject_id:req.body.subject_id,
             qps_title: req.body.qps_title,
             qps_time: req.body.qps_time,
             qps_mark: req.body.qps_mark,
-            //qps_negative_mark: req.body.qps_negative_mark,
             no_of_ques: req.body.no_of_ques,
             qps_language: req.body.qps_language,
-            //ques_ids: req.body.ques_ids,
             qps_date: req.body.qps_date,
-            solution_video:req.body.solution_video,
             solution_pdf:req.body.solution_pdf,
             qps_status:req.body.qps_status,
-            addedat:new Date()
             })
         data
         .save()

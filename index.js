@@ -37,9 +37,10 @@ const notificationRouter = require("./src/admin/routes/notification")
 const noticeRouter = require("./src/admin/routes/noticeBoard")
 const chatRouter = require("./src/admin/routes/chat")
 const contactRouter = require("./src/admin/routes/contactus")
-const watchRouter = require("./src/admin/routes/watchlatest")
+const watchRouter = require("./src/users/watchlatest")
 const router = require('./src/users/user');
-const userchat = require('./src/users/chat')
+const userchat = require('./src/users/chat');
+const watchlatest = require('./src/models/watchlatest');
 
 app.listen(3000,()=>{
     console.log(`Welcome Admin, Server Started at ${3000}`)
@@ -48,6 +49,7 @@ app.listen(3000,()=>{
 //app.use("/",tutor)
 app.use("/api",router)
 app.use("/api",routes)
+app.use("/api",watchRouter)
 app.use("/api",userchat)
 app.use("/admin",adminAuth)
 app.use("/admin",adminRoutes)
@@ -65,4 +67,3 @@ app.use("/admin",notificationRouter)
 app.use("/admin",noticeRouter)
 app.use("/admin",chatRouter)
 app.use("/admin",contactRouter)
-app.use("/admin",watchRouter)

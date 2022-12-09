@@ -1,65 +1,50 @@
 const mongoose = require("mongoose")
 const questionSetSchema = mongoose.Schema({
-    // qps_id:{
-    //     type: Number,
-    //     //required: true
-    // },
-    chapter_name:{
+    class_id: {
         type: String,
-        //required: true
+        required: true
     },
-    admin_id:{
+    subject_id: {
         type: String,
-        //required: true
-    } ,
-    subject:{
-        type: String,
-        //required: true
-    } ,
-    qps_title:{
-        type: String,
-        //required: true
+        required: true
     },
-    qps_time:{
+    qps_title: {
+        type: String,
+        required: true
+    },
+    qps_time: {
+        type: String,
+        required: true
+    },
+    qps_mark: {
         type: Number,
-        //required: true
+        required: true
     },
-    qps_mark:{
+    no_of_ques: {
         type: Number,
-        //required: true
+        required: true
     },
-    // qps_negative_mark:{
-    //     type: String,
-    //     //required: true
-    // },
-    no_of_ques:{
-        type: Number,
-        //required: true
-    },
-    qps_language:{
+    qps_language: {
         type: String,
-        //required: true
+        required: true
     },
-    // ques_ids:{
-    //     type: String,
-    //     //required: true
-    // },
-    qps_date:{
+
+    qps_date: {
         type: Date,
-        //required: true
+        required: true
     },
-    // solution_video:{
-    //     type: Number,
-    //     //required: true
-    // },
-    solution_pdf:{
+
+    solution_pdf: {
         type: String,
-        //required: true
-    } ,
-    qps_status:{
-        type:String,
-        //required: true
+        required: false
     },
-    
+    qps_status: {
+        type: String,
+        required: true
+    },
+    addedAt:{
+        type:Date,
+        default:Date.now()
+    }
 })
 module.exports = mongoose.model("QuestionSet", questionSetSchema)

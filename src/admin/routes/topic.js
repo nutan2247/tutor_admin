@@ -18,6 +18,7 @@ router.get('/topic/list', checkToken, async (req, res) => {
         for (const [_, value] of Object.entries(Alltopic)) {
             const subjectdata = await Subject.findOne({_id:value.subject_id});
             const classdata = await Class.findOne({_id:subjectdata.class_id});
+            // console.log(classdata)
 
             var topic = {
                 topic_id: value._id,
