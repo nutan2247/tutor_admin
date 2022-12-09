@@ -20,11 +20,8 @@ router.get('/topic/list', checkToken, async (req, res) => {
             console.log(value);
             const subjectdata = await Subject.findOne({_id:value.subject_id});
             const classdata = await Class.findOne({_id:subjectdata.class_id});
-<<<<<<< HEAD
             // console.log(classdata)
-=======
             const chapterdata = await Chapter.findOne({_id:value.chapter_id});
->>>>>>> 1408c8aa16304b799b99dd0cd85522004817b2d8
 
             var topic = {
                 topic_id: value._id,
