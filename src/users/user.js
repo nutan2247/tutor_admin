@@ -375,19 +375,6 @@ router.post('/student_objectid', checktoken, async (req, res) => {
 })
 
 
-// //Watch latest api
-// router.get('/watch_latest', checktoken, async (req, res) => {
-//     try {
-//         const Watch = await watchlatest.find({ status: 1 })
-//         res.status(200).json({ success: true, Watch })
-
-
-//     } catch (error) {
-//         res.status(500).json({ succes: false, message: error.message })
-
-//     }
-// })
-
 
 //Subject api
 router.get('/student_subject', checktoken, async (req, res) => {
@@ -451,7 +438,7 @@ router.post("/chapter", checktoken, async (req, res) => {
 
 //Connect Two Collections
 router.post("/quiz", checktoken, async (req, res) => {
-    const admin_id = req.body.admin_id
+    const class_id = req.body.class_id
     try {
         const quiz = await questionSet.aggregate([{ $match: { admin_id } },
         {
@@ -536,17 +523,17 @@ router.post('/student/class', checktoken, async (req, res) => {
 
 
 router.post('/student/subject', checktoken, async (req, res) => {
-    const admin_id = req.body.admin_id
+    const class_id = req.body.class_id
     try {
         let subjec = "no data found";
         let status = false;
         let msg = "empty";
-        if (!admin_id) {
+        if (!class_id) {
             subjec = await Subject.find()
             status = true;
             msg = "All class subject";
         } else {
-            subjec = await Subject.find({ admin_id })
+            subjec = await Subject.find({ class_id })
             status = true;
             msg = "one class subject";
         }
@@ -791,6 +778,18 @@ router.post("/topic", checktoken, async (req, res) => {
         return res.status(200).json({ success: true, data: data })
     } catch (err) {
         return res.status(401).json({ success: false, err: err.message })
+    }
+})
+
+
+//questionSet List Api
+router.post("/questionset/list",checktoken,async(req,res)=>{
+    const { class_id, subject_id} = req.body
+    try{
+        const questionet = await questionSet.find({class_id, subject_id},{ "status":"active"})
+        return res.status(200).json({success:true, data:questionet})
+    }catch(err){
+        return res.send(401).json({success:false, msg:err.message})
     }
 })
 
