@@ -602,7 +602,7 @@ async function addresult(data) {
     const neres = new quizresult({
         student_id: data.student_id,
         qset: data.qset,
-        class: data.admin_id,
+        class_id: data.class_id,
         subject: data.subject,
         total_question: attempt,
         wrong: count_incorrect,
@@ -630,7 +630,7 @@ async function updateresult(data, storedRes) {
         $set: {
             student_id: data.student_id,
             qset: data.qset,
-            class: data.admin_id,
+            class_id: data.class_id,
             subject: data.subject,
             total_question: attempt,
             wrong: count_incorrect,
@@ -645,7 +645,8 @@ async function addlog(data, resid) {
     const log = new resultlog({
         result_id: data.result_id,
         student_id: data.student_id,
-        admin_id: data.admin_id,
+        qset: data.qset,
+        class_id: data.class_id,
         subject: data.subject,
         ques_no: data.ques_no,
         answer: data.answer,
@@ -742,9 +743,7 @@ router.get("/quiz/score/:_id", async (req, res) => {
             }
             totalscore.push(Score)
         }
-        // const totalS = gradeSystem(55)
-        // console.log(totalS)
-        /** co = 55; co = gradeSystem(55) */
+      
         return res.status(200).json({ success: true, data: totalscore })
     } catch (err) {
         return res.status(400).json({ success: false, msg: err.message })
@@ -786,12 +785,26 @@ router.post("/topic", checktoken, async (req, res) => {
 router.post("/questionset/list",checktoken,async(req,res)=>{
     const { class_id, subject_id} = req.body
     try{
-        const questionet = await questionSet.find({class_id, subject_id},{ "status":"active"})
+        const questionet = await questionSet.find({class_id, subject_id, "status":"active"})
+        .select(['qps_title','qps_language','qps_time','qps_mark','no_of_ques'])
         return res.status(200).json({success:true, data:questionet})
     }catch(err){
         return res.send(401).json({success:false, msg:err.message})
     }
 })
+
+
+//GetScore API for one set
+router.post("/quiz/getscore",async(req,res)=>{
+    const {subject_id, qps_id} = req.body
+    try{
+        const score = await quizresult.find({ subject_id, qps_id})
+        return res.status(200).status({success:true, data:score})
+    }catch(err){
+        return res.status(401).json({success:false, msg:err.message})
+    }
+})
+
 
 
 module.exports = router
