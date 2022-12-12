@@ -17,7 +17,7 @@ const checktoken = require('../users/usermiddleware/verify_token')
 const Class = require('../admin/models/class')
 const upload = require('../models/uploadimage')
 // const watchlatest = require('../models/watchlatest')
-const Notification = require("../models/Notifications")
+const Notification = require("../admin/models/notify")
 const checkBox = require("../admin/models/SubjectCheckbox")
 //const Setting = require('../models/contact_us');
 const ContactUs = require("../admin/models/contactus")
@@ -807,6 +807,21 @@ router.post("/quiz/getscore", async (req, res) => {
     }
 })
 
+
+/** get subject by class start */
+
+router.get('/student/subjects/:class_id', checktoken, async (req, res) => {
+    const class_id = req.params.class_id
+    try {
+        let subjec = await Subject.find({ class_id });
+        const count = (subjec.length > 0)?subjec.length:0;  
+        return res.status(200).json({ success: true, msg: "Student Subject List", numSubject : count, data:subjec  })
+
+    } catch (error) {
+        res.status(500).json({ succes: false, message: error.message })
+    }
+});
+/** get subject by class end */
 
 
 module.exports = router
