@@ -25,7 +25,7 @@ router.get('/chapter/list', checkToken, async (req, res) => {
                 class_id: value.class_id,
                 class_name: classdata.class_name,
                 subject_id: value.subject_id,
-                subject_name: subjectdata.subject_name,
+                name: subjectdata.name,
                 board:value.board,
                 language:value.language,
                 chapter_title:value.chapter_title,
@@ -120,7 +120,7 @@ router.get('/subject/list', checkToken, async (req, res) => {
                 class_id: value.class_id,
                 class_name: classdata.class_name,
                 subject_id: value._id,
-                subject_name: value.subject_name,
+                name: value.name,
                 image: value.image,
                 status: value.status,
                 date: value.date,
@@ -145,7 +145,7 @@ router.post('/subject/add', checkToken, async (req, res) => {
     try {
         const data = new Subject({
             class_id: req.body.class_id,
-            subject_name: req.body.subject_name,
+            name: req.body.name,
             image: req.body.image,
             status: req.body.status,
             date: new Date()

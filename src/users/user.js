@@ -785,7 +785,7 @@ router.post("/topic", checktoken, async (req, res) => {
 router.post("/questionset/list", checktoken, async (req, res) => {
     const { class_id, subject_id } = req.body
     try {
-        const questionet = await questionSet.find({ class_id, subject_id, "status": "active" })
+        const questionet = await questionSet.find({ class_id, subject_id, status: "active" })
             .select(['qps_title', 'qps_language', 'qps_time', 'qps_mark', 'no_of_ques'])
         return res.status(200).json({ success: true, data: questionet })
     } catch (err) {
@@ -799,7 +799,7 @@ router.post("/quiz/getscore", async (req, res) => {
     const { student_id, qps_id } = req.body
     try {
         const score = await quizresult.find({ student_id, qps_id })
-        const per = (parseInt(score.total_question)*100)/parseInt(score.total_question)
+        const per = (parseInt(score.total_question) * 100) / parseInt(score.total_question)
         console.log(per)
         return res.status(200).status({ success: true, data: score })
     } catch (err) {
@@ -814,14 +814,63 @@ router.get('/student/subjects/:class_id', checktoken, async (req, res) => {
     const class_id = req.params.class_id
     try {
         let subjec = await Subject.find({ class_id });
-        const count = (subjec.length > 0)?subjec.length:0;  
-        return res.status(200).json({ success: true, msg: "Student Subject List", numSubject : count, data:subjec  })
+        const count = (subjec.length > 0) ? subjec.length : 0;
+        return res.status(200).json({ success: true, msg: "Student Subject List", numSubject: count, data: subjec })
 
     } catch (error) {
         res.status(500).json({ succes: false, message: error.message })
     }
 });
 /** get subject by class end */
+
+
+
+/**chapter topic get by subject_id start */
+
+router.post('/chapter/topic', checktoken, async (req, res) => {
+    const subject_id = req.body.subject_id
+    try {
+        var resultArr = [];
+        const Allchapter = await Chapter.find({ subject_id });
+
+        for (const [_, value] of Object.entries(Allchapter)) {
+            const topicdata = await Topic.find({ chapter_id: value._id ,subject_id:subject_id , status: "active"});
+            
+        var resulttopicArr = [];
+            if(topicdata){
+                for (const [_, tvalue] of Object.entries(topicdata)) {
+                    var topic = {
+                        topic_id: tvalue._id,
+                        topic_name: tvalue.topic_name,
+                        upload_pdf: tvalue.upload_pdf,
+                        status: tvalue.status,
+                    };
+                    resulttopicArr.push(topic);
+                }
+            }
+
+            var chapter = {
+                chapter_id: value._id,
+                chapter_title: value.chapter_title,
+                status: value.status,
+                topic: resulttopicArr
+            };
+            resultArr.push(chapter);
+        }
+
+        return res.status(200).json({
+            success: true,
+            status: 200,
+            count: resultArr.length,
+            msg: 'chapter List',
+            data: resultArr
+        })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
+/**chapter topic get by subject_id end*/
+
 
 
 module.exports = router
