@@ -415,9 +415,17 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 
 //contact us api
 router.get("/contact_us", checktoken, async (req, res) => {
+    // console.log(req.user)
+    const _id = req.user._id;
     try {
-        const sett = await ContactUs.find()
-        return res.status(200).json({ success: true, sett })
+        const userData = await Student.findById({_id})
+        var result = {
+        contact_no:userData.mobile_number,
+        email:userData.email,
+        student_name:userData.name,
+        address:userData.address
+        };
+        return res.status(200).json({ success: true, result })
     } catch (err) {
         return res.status(401).json({ success: false, message: err.message })
     }
@@ -796,12 +804,32 @@ router.post("/questionset/list", checktoken, async (req, res) => {
 
 //GetScore API for one set
 router.post("/quiz/getscore", async (req, res) => {
-    const { student_id, qps_id } = req.body
+    const student_id  = req.body.student_id
     try {
-        const score = await quizresult.find({ student_id, qps_id })
-        const per = (parseInt(score.total_question) * 100) / parseInt(score.total_question)
-        console.log(per)
-        return res.status(200).status({ success: true, data: score })
+        const score = await quizresult.find({ student_id })
+        var quiz_completion = []
+        for (const [_, value] of Object.entries(score)) {
+            const pers = (parseInt(value.total_question) * 100) / parseInt(value.total_question);
+            var completion = pers;
+            const marks = (parseInt(value.correct)*5);
+            var total_obtain_marks =marks;
+            const Score = {
+                student_id: value.student_id,
+                qset: value.qset,
+                class_id: value.class_id,
+                subject: value.subject,
+                correct: value.correct,
+                wrong: value.wrong,
+                total_question: value.total_question,
+                total_obtain_marks:total_obtain_marks,
+                completion: completion+"%"
+            }
+            quiz_completion.push(Score)
+        }
+
+        // const per = (parseInt(score.total_question) * 100) / parseInt(score.total_question)
+        // console.log(per)
+        return res.status(200).json({ success: true, data: quiz_completion })
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })
     }
