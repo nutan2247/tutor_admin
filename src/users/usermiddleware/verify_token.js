@@ -10,8 +10,8 @@ const checktoken = function (req, res, next){
              if (error) {
                  return res.status(401).json({ msg: 'Token is not valid' });
              } else {
-                 req.user = decoded.user;
-                 //console.log(decoded.user)
+                 req.user = decoded.payload.user;
+                //  console.log(decoded.payload.user)
                  next();
              }
          })
