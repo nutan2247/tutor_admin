@@ -11,6 +11,10 @@ const quizSchema = mongoose.Schema({
    options:{
     type:Array,
     required:true
-   }
+   },
+   createdAt:{
+      type:Date,
+      default:Date.now()
+  }
 })
 module.exports = mongoose.model("Quiz", quizSchema)

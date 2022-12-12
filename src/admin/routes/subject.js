@@ -121,6 +121,7 @@ router.get('/subject/list', checkToken, async (req, res) => {
                 class_name: classdata.class_name,
                 subject_id: value._id,
                 subject_name: value.subject_name,
+                image: value.image,
                 status: value.status,
                 date: value.date,
             };
@@ -145,6 +146,7 @@ router.post('/subject/add', checkToken, async (req, res) => {
         const data = new Subject({
             class_id: req.body.class_id,
             subject_name: req.body.subject_name,
+            image: req.body.image,
             status: req.body.status,
             date: new Date()
         })

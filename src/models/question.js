@@ -6,11 +6,15 @@ const QuestionListSchema = mongoose.Schema({
     },
     setid:{
         type:mongoose.Schema.Types.ObjectId,
-        //required:true
+        required:true
     }, 
     explations:{
         type:String,
         required:true
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now()
     }
 })
 module.exports = mongoose.model("Question",QuestionListSchema)
