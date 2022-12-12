@@ -22,16 +22,18 @@ const router = express.Router();
 
 
 router.post("/watchlatest/list",checktoken,async(req,res)=>{
-    const {class_id} = req.body
+    const class_id = req.body.class_id
     try{
         const subjectList = await Subject.find({ class_id })
+       // console.log(subjectList)
         var resArr = [];
         for (const [_, value] of Object.entries(subjectList)) {
-            const latest = await Topic.find({subject_id:value._id,  "upload_video":{"$ne":""}, "status":"active"})
+            const latest = await Topic.findOne({subject_id:value._id,  "upload_video":{"$ne":""}, "status":"active"})
             .select(['chapter_id','topic_name','upload_video', 'upload_pdf'])
             .sort({_id:-1})
             .limit(4);
-  
+            
+           // console.log(value._id)
             resArr.push(latest);
         }
 

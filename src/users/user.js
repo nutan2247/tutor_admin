@@ -587,7 +587,7 @@ router.post("/quizresult", async (req, res) => {
 })
 
 async function addresult(data) {
-    const count_correct = 0;
+    var count_correct = 0;
     var count_incorrect = 0;
     var attempt = 0;
 
@@ -645,6 +645,7 @@ async function addlog(data, resid) {
     const log = new resultlog({
         result_id: data.result_id,
         student_id: data.student_id,
+        qps_id: data.qps_id,
         qset: data.qset,
         class_id: data.class_id,
         subject: data.subject,
@@ -720,16 +721,15 @@ function gradeSystem(scoreP) {
 
 //quiz score Api
 router.get("/quiz/score/:_id", async (req, res) => {
-    const correct_answer = 0;
     var msg = "";
     const id = req.params
     try {
         const result = await quiz.find({ student_id: id });
         const totalscore = []
         for (const [_, value] of Object.entries(result)) {
-            const pers = (parseInt(value.correct) * 100)/parseInt(value.total_question);
-            var grade = gradeSystem(pers); 
-            console.log(grade,pers);
+            const pers = (parseInt(value.correct) * 100) / parseInt(value.total_question);
+            var grade = gradeSystem(pers);
+            console.log(grade, pers);
             const Score = {
                 student_id: value.student_id,
                 qset: value.qset,
@@ -739,11 +739,11 @@ router.get("/quiz/score/:_id", async (req, res) => {
                 correct: value.correct,
                 wrong: value.wrong,
                 total_question: value.total_question,
-                grade : grade 
+                grade: grade
             }
             totalscore.push(Score)
         }
-      
+
         return res.status(200).json({ success: true, data: totalscore })
     } catch (err) {
         return res.status(400).json({ success: false, msg: err.message })
@@ -782,26 +782,28 @@ router.post("/topic", checktoken, async (req, res) => {
 
 
 //questionSet List Api
-router.post("/questionset/list",checktoken,async(req,res)=>{
-    const { class_id, subject_id} = req.body
-    try{
-        const questionet = await questionSet.find({class_id, subject_id, "status":"active"})
-        .select(['qps_title','qps_language','qps_time','qps_mark','no_of_ques'])
-        return res.status(200).json({success:true, data:questionet})
-    }catch(err){
-        return res.send(401).json({success:false, msg:err.message})
+router.post("/questionset/list", checktoken, async (req, res) => {
+    const { class_id, subject_id } = req.body
+    try {
+        const questionet = await questionSet.find({ class_id, subject_id, "status": "active" })
+            .select(['qps_title', 'qps_language', 'qps_time', 'qps_mark', 'no_of_ques'])
+        return res.status(200).json({ success: true, data: questionet })
+    } catch (err) {
+        return res.send(401).json({ success: false, msg: err.message })
     }
 })
 
 
 //GetScore API for one set
-router.post("/quiz/getscore",async(req,res)=>{
-    const {subject_id, qps_id} = req.body
-    try{
-        const score = await quizresult.find({ subject_id, qps_id})
-        return res.status(200).status({success:true, data:score})
-    }catch(err){
-        return res.status(401).json({success:false, msg:err.message})
+router.post("/quiz/getscore", async (req, res) => {
+    const { student_id, qps_id } = req.body
+    try {
+        const score = await quizresult.find({ student_id, qps_id })
+        const per = (parseInt(score.total_question)*100)/parseInt(score.total_question)
+        console.log(per)
+        return res.status(200).status({ success: true, data: score })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
     }
 })
 
