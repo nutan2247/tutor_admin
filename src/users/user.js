@@ -653,7 +653,6 @@ async function addlog(data, resid) {
     const log = new resultlog({
         result_id: data.result_id,
         student_id: data.student_id,
-        qps_id: data.qps_id,
         qset: data.qset,
         class_id: data.class_id,
         subject: data.subject,
@@ -804,12 +803,13 @@ router.post("/questionset/list", checktoken, async (req, res) => {
 
 //GetScore API for one set
 router.post("/quiz/getscore", async (req, res) => {
-    const student_id  = req.body.student_id
+    const {student_id, qset}  = req.body
     try {
-        const score = await quizresult.find({ student_id })
+        const score = await quizresult.find({ student_id, qset })
         var quiz_completion = []
         for (const [_, value] of Object.entries(score)) {
             const pers = (parseInt(value.total_question) * 100) / parseInt(value.total_question);
+            //console.log(pers)
             var completion = pers;
             const marks = (parseInt(value.correct)*5);
             var total_obtain_marks =marks;
@@ -826,9 +826,6 @@ router.post("/quiz/getscore", async (req, res) => {
             }
             quiz_completion.push(Score)
         }
-
-        // const per = (parseInt(score.total_question) * 100) / parseInt(score.total_question)
-        // console.log(per)
         return res.status(200).json({ success: true, data: quiz_completion })
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })

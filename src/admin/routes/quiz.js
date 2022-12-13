@@ -1,5 +1,6 @@
 const express   = require('express'); 
 const question   = require('../models/question'); 
+const questionSet = require("../models/questionSetPaper")
 const mongoose  = require('mongoose'); 
 const checkToken= require('../middleware/check-token'); 
 const router    = express.Router(); 
@@ -7,32 +8,25 @@ const router    = express.Router();
 
 // **** Get All question List **** //
 router.get('/quiz/list',checkToken, async (req, res) => { 
-   
-    try{
-        const result = await question.aggregate([
+    const id = mongoose.Types.ObjectId(req.body._id)
+    try {
+        const ques = await questionSet.aggregate([{ $match: { _id: id } },
+        {
+            $lookup:
             {
-                $lookup:
-                {
-                    from: "questionsets",
-                    localField: "set",
-                    foreignField: "_id",
-                    as: "result"
-                }
-              },{ $project:{ "result.chapter_name": 0, "result.qps_title": 0, "result.qps_time": 0, "result.qps_mark": 0, "result.no_of_ques": 0, "result.ques_ids": 0, "result.qps_date": 0, "result.solution_pdf": 0, "__v": 0, "result.qp_status": 0 } }
-      ])
-        return res.status(200).json({
-            success:true,
-            status:200,
-            count: result.length,
-            msg:'quiz List',
-            data: result
-        })
+                from: "quizzes",
+                localField: "_id",
+                foreignField: "set",
+                as: "result"
+            }
+        }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
+        ])
+        return res.status(200).json({ success: true, result: ques[0] }),
+            console.log(ques)
+    } catch (error) {
+        return res.status(401).json({ success: false, message: error.message })
     }
-    catch(error){
-        res.status(500).json({success:false, message: error.message})
-    }
-});
-
+})
 
 // ** Add question** //
 router.post('/quiz/add',checkToken, async (req, res) => {

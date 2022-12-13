@@ -1,5 +1,7 @@
 const express   = require('express'); 
 const questionSet   = require('../models/questionSetPaper'); 
+const Subject = require('../models/subject');
+const Class = require('../models/class');
 const mongoose  = require('mongoose'); 
 const checkToken= require('../middleware/check-token'); 
 const router    = express.Router(); 
@@ -8,13 +10,40 @@ const router    = express.Router();
 // **** Get All questionSet List **** //
 router.get('/questionSet/list',checkToken, async (req, res) => { 
     try{
+        var questionArr=[]
         const result = await questionSet.find(); 
+        for (const [_, value] of Object.entries(result)) {
+            const classdata = await Class.findOne({_id:value.class_id})
+            const subjectdata = await Subject.findById({_id:value.subject_id})
+            console.log(subjectdata)
+            if(subjectdata){
+     
+            var question = {
+                _id: value._id,
+                class_id: value.class_id,
+                class_name: classdata.class_name,
+                subject_id: value.subject_id,
+                name: subjectdata.name,
+                qps_title: value.qps_title,
+                qps_time: value.qps_time,
+                qps_mark: value.qps_mark,
+                no_of_ques: value.no_of_ques,
+                qps_language: value.qps_language,
+                qps_date: value.qps_date,
+                solution_pdf:value.solution_pdf,
+                qps_status:value.qps_status,
+                date: value.date,
+                status: value.status,
+            };
+            questionArr.push(question);
+            }
+        }
         return res.status(200).json({
             success:true,
             status:200,
             count: result.length,
             msg:'questionSet List',
-            data: result
+            data: questionArr
         })
     }
     catch(error){
