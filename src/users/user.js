@@ -327,27 +327,24 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
         father_name: req.body.father_name,
         roll_no: req.body.roll_no,
         date_of_admission: req.body.date_of_admission,
-        // contact_no : req.body.contact_no,
-        student_photo: req.body.student_photo,
+        
     }
     if (req.file) {
-        Details.student_photo = req.file.path
+        student_photo =req.file.path
     }
-    // Data123 = await student.findById({_id:id});
-    // console.log(Data123)
-    try {
+        try {
         const { name, email } = req.body
         if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
         }
-        const Data = await Student.updateOne({ _id: id }, {
+        const Data = await Student.findByIdAndUpdate({ _id: id }, {
             $set: {
                 name: req.body.name,
                 email: req.body.email,
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                student_photo: "http://localhost:3000/"+req.file.path,
+                student_photo:"http://localhost:3000/"+req.file.path.replace(/\\/g, '/')
             },
         })
 
