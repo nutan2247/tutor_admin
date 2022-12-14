@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(cors())
 
-app.use("/uploads",express.static('uploads'))
+app.use("/uploads",express.static('uploads'))  //Images path for student_update Api in user.js file
 
 // app.use(cors({
 //     'allowedHeaders': ['sessionId', 'Content-Type'],
