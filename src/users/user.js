@@ -369,6 +369,19 @@ router.get("/student/details/:_id", checktoken ,async(req,res)=>{
 })
 
 
+//Profile picture Api
+router.get("/profile",checktoken ,async(req,res)=>{
+    const _id = req.user._id
+    try{
+        const data = await Student.findById({_id}).select(['student_photo','name','mobile_number'])
+        return res.status(200).json({success:true, data:data})
+    }catch(err){
+        return res.status(401).json({success:false, msg:err.message})
+    }
+})
+
+
+
 //Student Data Get By ObjectId
 router.post('/student_objectid', checktoken, async (req, res) => {
     const _id = req.body._id

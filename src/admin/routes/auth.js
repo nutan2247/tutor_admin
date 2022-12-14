@@ -137,11 +137,11 @@ router.patch("/update", auth, upload, async (req, res) => {
         email: req.body.email,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        //image: req.file.path,
-        image:{
-          data:req.file.path,
-          contentType:"image"
-        }
+        image: req.file.path,
+        // image:{
+        //   data:req.file.path,
+        //   contentType:"image"
+        // }
       },
     })
     console.log(Details)
