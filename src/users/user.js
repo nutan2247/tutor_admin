@@ -347,7 +347,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                student_photo: req.file.path,
+                student_photo: "http://localhost:3000/"+req.file.path,
             },
         })
 
@@ -358,6 +358,17 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
 
     }
 
+})
+
+//get student personal details
+router.get("/student/details/:_id",checktoken,async(req,res)=>{
+    const _id=req.params._id
+    try{
+        const detail = await Student.findById({_id})
+        return res.status(200).json({success:true, data:detail})
+    }catch(err){
+        return res.status(401).json({success:false, msg:err.message})
+    }
 })
 
 
