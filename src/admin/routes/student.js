@@ -30,7 +30,8 @@ router.post('/student/add', auth, async (req, res) => {
         const data = new student({
             _id: new mongoose.Types.ObjectId,
             board: req.body.board,
-            admission_for: req.body.admission_for,
+            admin_id: req.body.admin_id,
+            class_id: req.body.class_id,
             select_batch_time: req.body.select_batch_time,
             name: req.body.name,
             father_name: req.body.father_name,

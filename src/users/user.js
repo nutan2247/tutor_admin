@@ -275,12 +275,11 @@ router.post('/verify_otp', async (req, res) => {
             user: {
                 _id: user._id,
                 mobile_number: user.mobile_number,
-                admin_id: user.admin_id
+                class_id: user.class_id
             },
-            //console.log(payload)
         };
 
-        //   console.log(payload);
+        //    console.log(payload);
         jwt.sign({ payload }, process.env.JWT_KEY, { expiresIn: '24h' },
             (err, token) => {
                 if (err) throw err;

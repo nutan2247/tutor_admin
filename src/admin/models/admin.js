@@ -6,7 +6,9 @@ const userSchema = mongoose.Schema({
     first_name: { type: String, required: false },
     last_name: { type: String, required: false },
     password: { type: String, required: false },
-    image: { type: String, required: false }
+    // image: { type: String, required: false }
+     image: { data: Buffer, contentType:String }
+
 });
 
 module.exports = mongoose.model('tbl_user', userSchema);

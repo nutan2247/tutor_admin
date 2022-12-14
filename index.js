@@ -40,7 +40,6 @@ const contactRouter = require("./src/admin/routes/contactus")
 const watchRouter = require("./src/users/watchlatest")
 const router = require('./src/users/user');
 const userchat = require('./src/users/chat');
-const watchlatest = require('./src/models/watchlatest');
 
 app.listen(3000,()=>{
     console.log(`Welcome Admin, Server Started at ${3000}`)

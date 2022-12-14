@@ -9,6 +9,10 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    class_id: {
+        type:String,
+        required:true
+    },
     select_batch_time: {
         type: String,
         required: true
