@@ -361,7 +361,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
 })
 
 //get student personal details
-router.get("/student/details/:_id",checktoken,async(req,res)=>{
+router.get("/student/details/:_id", checktoken ,async(req,res)=>{
     const _id=req.params._id
     try{
         const detail = await Student.findById({_id})
