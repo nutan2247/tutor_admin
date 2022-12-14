@@ -1,7 +1,6 @@
 const express = require('express');
-const watchlatest = require('../models/watchlatest');
+// const watchlatest = require('../models/watchlatest');
 const Subject = require("../admin/models/subject")
-const Chapter = require('../admin/models/chapter');
 const Topic=require("../admin/models/topic")
 const checktoken = require('../users/usermiddleware/verify_token')
 const router = express.Router();

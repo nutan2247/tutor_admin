@@ -1,4 +1,5 @@
 const multer = require('multer')
+const image = require("../models/admin")
 const path = require('path');
 
 

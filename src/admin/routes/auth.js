@@ -123,11 +123,9 @@ router.post("/changepassword", auth, async (req, res) => {
 router.patch("/update", auth, upload, async (req, res) => {
   const _id = req.body._id
   const Details = {
-    id: req.body.id,
     email: req.body.email,
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    //password: req.body.password,
     image: req.body.image
   }
   if (req.file) {
@@ -136,18 +134,31 @@ router.patch("/update", auth, upload, async (req, res) => {
   try {
     const Data = await Admin.updateOne({ _id:_id }, {
       $set: {
-        id: req.body.id,
         email: req.body.email,
         first_name: req.body.first_name,
         last_name: req.body.last_name,
-        //password: req.body.password,
-        image: req.file.path,
+        //image: req.file.path,
+        image:{
+          data:req.file.path,
+          contentType:"image"
+        }
       },
     })
     console.log(Details)
+    console.log(Data)
     return res.status(200).json({ success: true, Data })
   } catch (err) {
     return res.status(401).json({ success: false, msg: err.message })
+  }
+})
+
+
+router.get("/get", async(req,res)=>{
+  try{
+    const result = await Admin.find()
+    return res.status(200).json(data=result)
+  }catch(err){
+    return res.status(401).json(err.message)
   }
 })
 module.exports = router;
