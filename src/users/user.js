@@ -28,6 +28,8 @@ const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
 const PaymentLog = require("../admin/models/paymentLog")
 const Topic = require("../admin/models/topic")
+const Admin = require("../admin/models/admin")
+
 
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
@@ -434,16 +436,16 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 
 
 //contact us api
-router.get("/contact_us", checktoken, async (req, res) => {
-    // console.log(req.user)
-    const _id = req.user._id;
+router.get("/contact_us/:_id", checktoken, async (req, res) => {
+    const _id = req.params._id;
     try {
-        const userData = await Student.findById({_id})
+        const adminData = await Admin.findById({_id})
         var result = {
-        contact_no:userData.mobile_number,
-        email:userData.email,
-        student_name:userData.name,
-        address:userData.address
+        mobile_number:adminData.mobile_number,
+        email:adminData.email,
+        first_name:adminData.first_name,
+        last_name:adminData.last_name,
+        //address:userData.address
         };
         return res.status(200).json({ success: true, result })
     } catch (err) {

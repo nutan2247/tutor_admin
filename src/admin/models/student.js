@@ -98,8 +98,8 @@ const studentSchema = mongoose.Schema({
         default:Date.now()
     },
     student_photo:{
-        data:Buffer,
-        contentType:String
+        type:String,
+        required:false
     },
     date_of_admission:{
         type:String
