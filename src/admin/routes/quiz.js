@@ -1,13 +1,13 @@
-const express   = require('express'); 
-const question   = require('../models/question'); 
+const express = require('express');
+const question = require('../models/question');
 const questionSet = require("../models/questionSetPaper")
-const mongoose  = require('mongoose'); 
-const checkToken= require('../middleware/check-token'); 
-const router    = express.Router(); 
+const mongoose = require('mongoose');
+const checkToken = require('../middleware/check-token');
+const router = express.Router();
 
 
 // **** Get All question List **** //
-router.get('/quiz/list',checkToken, async (req, res) => { 
+router.post('/quiz/list', checkToken, async (req, res) => {
     const id = mongoose.Types.ObjectId(req.body._id)
     try {
         const ques = await questionSet.aggregate([{ $match: { _id: id } },
@@ -29,58 +29,58 @@ router.get('/quiz/list',checkToken, async (req, res) => {
 })
 
 // ** Add question** //
-router.post('/quiz/add',checkToken, async (req, res) => {
-    try{
+router.post('/quiz/add', checkToken, async (req, res) => {
+    try {
         const data = new question({
             //_id: new mongoose.Types.ObjectId,
-            set:req.body.set,
-            question:req.body.question,
-            options:req.body.options,
+            set: req.body.set,
+            question: req.body.question,
+            options: req.body.options,
             add_date: new Date()
-            })
-        data
-        .save()
-        .then(result =>{
-            res.status(200).json({
-                success: true,
-                message:'data stored!'
-            });
         })
-        .catch(err =>{
+        data
+            .save()
+            .then(result => {
+                res.status(200).json({
+                    success: true,
+                    message: 'data stored!'
+                });
+            })
+            .catch(err => {
                 res.status(500).json({
-                    success:false,
-                    error:err
-                }); 
+                    success: false,
+                    error: err
+                });
             })
     }
-    catch(error){
-        res.status(500).json({success:false, message: error.message})
+    catch (error) {
+        res.status(500).json({ success: false, message: error.message })
     }
 });
 
 
 //Question Edit
-router.patch('/quiz/update/:_id',checkToken, (req, res, next)=>{
+router.patch('/quiz/update/:_id', checkToken, (req, res, next) => {
 
-    question.findByIdAndUpdate(req.params._id,req.body, (err,emp)=>{
-    if (err) {
-        return res.status(500).send({success: false, error: "Problem with Updating the recored "})
-    };
-    res.send({ success:true, msg: "Update successfull"});
-    })  
+    question.findByIdAndUpdate(req.params._id, req.body, (err, emp) => {
+        if (err) {
+            return res.status(500).send({ success: false, error: "Problem with Updating the recored " })
+        };
+        res.send({ success: true, msg: "Update successfull" });
+    })
 });
 
 //Delete Question 
-router.delete('/quiz/delete/:_id',checkToken, (req, res, next)=>{
+router.delete('/quiz/delete/:_id', checkToken, (req, res, next) => {
     const id = req.params._id;
-    question.deleteOne({ _id : id })
-    .exec()
-    .then( result => {
-        res.status(200).json({success:true, msg:result});
-    })
-    .catch(err => {
-        res.status(500).json({success:false, error:err});
-    });
+    question.deleteOne({ _id: id })
+        .exec()
+        .then(result => {
+            res.status(200).json({ success: true, msg: result });
+        })
+        .catch(err => {
+            res.status(500).json({ success: false, error: err });
+        });
 });
 
 
