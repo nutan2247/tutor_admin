@@ -312,12 +312,12 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
         date_of_admission: req.body.date_of_admission,
         student_photo: req.body.student_photo
     }
-   
-    
+    if (req.file) {
+        student_photo = req.file.path
+    }
+
     try {
-        if (req.file !== undefined) {
-            student_photo = req.file.path
-        }
+
         const { name, email } = req.body
         if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
@@ -353,14 +353,9 @@ router.post('/student_update_data', checktoken, async (req, res) => {
         father_name: req.body.father_name,
         roll_no: req.body.roll_no,
         date_of_admission: req.body.date_of_admission,
-        //student_photo: req.body.student_photo
     }
-   
-    
     try {
-        if (req.file !== undefined) {
-            student_photo = req.file.path
-        }
+
         const { name, email } = req.body
         if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
@@ -372,7 +367,6 @@ router.post('/student_update_data', checktoken, async (req, res) => {
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                //student_photo: "http://localhost:3000/" + req.file.path.replace(/\\/g, '/'),
             },
         })
         console.log(Details)
@@ -428,7 +422,7 @@ router.post('/student_objectid', checktoken, async (req, res) => {
 router.get('/student_subject', checktoken, async (req, res) => {
     try {
 
-        const subj = await Subject.find({status:'active'})
+        const subj = await Subject.find({ status: 'active' })
         res.status(200).json({ success: true, subj })
 
 
