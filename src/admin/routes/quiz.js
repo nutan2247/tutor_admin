@@ -22,7 +22,8 @@ router.post('/quiz/list', checkToken, async (req, res) => {
             }
         }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
         ])
-        const clas = await studentClass.findOne().select(['-_id','-status'])
+        const setDetails = await questionSet.findById({_id:id}).select(['-_id','-status'])
+        const clas = await studentClass.findOne({_id:setDetails.class_id}).select(['-_id','-status'])
         return res.status(200).json({ success: true, result: ques[0], class:clas}),
             console.log(ques)
     } catch (error) {
