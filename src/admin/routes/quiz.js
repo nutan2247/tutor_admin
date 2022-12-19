@@ -1,6 +1,7 @@
 const express = require('express');
 const question = require('../models/question');
 const questionSet = require("../models/questionSetPaper")
+const studentClass = require("../models/class")
 const mongoose = require('mongoose');
 const checkToken = require('../middleware/check-token');
 const router = express.Router();
@@ -21,7 +22,8 @@ router.post('/quiz/list', checkToken, async (req, res) => {
             }
         }, { $project: { "chapter_name": 0, "qps_title": 0, "qps_time": 0, "qps_mark": 0, "no_of_ques": 0, "qps_language": 0, "ques_ids": 0, "qps_date": 0, "solution_pdf": 0, "__v": 0, "qp_status": 0 } }
         ])
-        return res.status(200).json({ success: true, result: ques[0] }),
+        const clas = await studentClass.findOne().select(['-_id','-status'])
+        return res.status(200).json({ success: true, result: ques[0], class:clas}),
             console.log(ques)
     } catch (error) {
         return res.status(401).json({ success: false, message: error.message })
