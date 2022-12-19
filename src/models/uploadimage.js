@@ -21,7 +21,7 @@ const upload = multer({
             
         ){
             callback(null, true)
-        } else {
+        }else {
             console.log("only jpg, jpeg and png file supported!")
             callback (null, false)
         }
