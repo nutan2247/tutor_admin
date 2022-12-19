@@ -13,7 +13,7 @@ const OtpVerify = require('../admin/models/otpsave')
 const Subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
 const Class = require('../admin/models/class')
-//const upload = require('../models/uploadimage')
+const upload = require('../models/uploadimage')
 const Notification = require("../admin/models/notify")
 const checkBox = require("../admin/models/SubjectCheckbox")
 const ContactUs = require("../admin/models/contactus")
@@ -40,37 +40,6 @@ const path = require('path');
 
 
 
-//IMAGE STORAGE
-const Storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "uploads/")
-    },
-    filename: function (req, file, cb) {
-        let ext = path.extname(file.originalname)
-        cb(null, Date.now() + ext)
-    }
-})
-
-
-//async function uploadImage() {
-    const upload = multer({
-        storage: Storage,
-        fileFilter: function (req, file, callback) {
-            if (
-                file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg"
-
-            ) {
-                callback(null, true)
-            } else {
-                console.log("only jpg, jpeg and png file supported!")
-                callback(null, false)
-            }
-        },
-        // limits : {
-        //     fileSize: 1024 * 1024 * 2
-        // }
-    }).single('student_photo')
-//}
 
 
 
@@ -374,7 +343,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
 
 
 //Update personal details
-router.post('/student_update_data', checktoken, upload, async (req, res) => {
+router.post('/student_update_data', checktoken, async (req, res) => {
 
     const id = req.body._id;
 
