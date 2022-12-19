@@ -8,18 +8,14 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-//const Student = require('../admin/models/student')
 const Student = require("../admin/models/student")
-//const OtpGenerate = require('../models/otpgenerate')
 const OtpVerify = require('../admin/models/otpsave')
 const Subject = require('../admin/models/subject')
 const checktoken = require('../users/usermiddleware/verify_token')
 const Class = require('../admin/models/class')
-const upload = require('../models/uploadimage')
-// const watchlatest = require('../models/watchlatest')
+//const upload = require('../models/uploadimage')
 const Notification = require("../admin/models/notify")
 const checkBox = require("../admin/models/SubjectCheckbox")
-//const Setting = require('../models/contact_us');
 const ContactUs = require("../admin/models/contactus")
 const Chapter = require('../admin/models/chapter');
 const questionSet = require('../admin/models/questionSetPaper');
@@ -35,36 +31,52 @@ const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
 const postQuizdata = require("../models/postquizdata")
-//const subject = require('../admin/models/subject');
+
+const multer = require('multer')
+const path = require('path');
 
 
 
 
-//const admission = require("../models/chapter")
-//const Question = require('../admin/models/questionSetPaper')
-// const QuestionList = require('../models/question');
-// const questionsetques = require('../models/questionStudent')
-//const { ideahub } = require('googleapis/build/src/apis/ideahub');
 
 
-//function for postquizdata
-// async function quizdata(){
-// const count_correct_answer = 0;
-// const count_incorrect_answer = 0;
-// const total_question = 0;
-// quizScore.forEach(element => {
-//     const score = element.options.find(selected == 'show')
-//     if(!score){
-//         return
-//     }else{
-//         if(score?.correct == 'true'){
-//             count_correct_answer++
-//         }else{
-//             count_incorrect_answer++
-//         }
-//     }
-//   });
-// }
+//IMAGE STORAGE
+const Storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, "uploads/")
+    },
+    filename: function (req, file, cb) {
+        let ext = path.extname(file.originalname)
+        cb(null, Date.now() + ext)
+    }
+})
+
+
+//async function uploadImage() {
+    const upload = multer({
+        storage: Storage,
+        fileFilter: function (req, file, callback) {
+            if (
+                file.mimetype == "image/jpeg" || file.mimetype == "image/png" || file.mimetype == "image/jpg"
+
+            ) {
+                callback(null, true)
+            } else {
+                console.log("only jpg, jpeg and png file supported!")
+                callback(null, false)
+            }
+        },
+        // limits : {
+        //     fileSize: 1024 * 1024 * 2
+        // }
+    }).single('student_photo')
+//}
+
+
+
+
+
+
 
 
 
@@ -329,27 +341,28 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
         father_name: req.body.father_name,
         roll_no: req.body.roll_no,
         date_of_admission: req.body.date_of_admission,
-        
+        student_photo: req.body.student_photo
     }
-    if (req.file) {
-        student_photo =req.file.path
-    }
-        try {
+   
+    
+    try {
+        if (req.file !== undefined) {
+            student_photo = req.file.path
+        }
         const { name, email } = req.body
         if (!name || !email) {
             return res.status(400).json({ error: 'Please Filled The Data' })
         }
-        const Data = await Student.findByIdAndUpdate({ _id: id }, {
+        const Data = await Student.updateOne({ _id: id }, {
             $set: {
                 name: req.body.name,
                 email: req.body.email,
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                student_photo:"http://localhost:3000/"+req.file.path.replace(/\\/g, '/')
+                student_photo: "http://localhost:3000/" + req.file.path.replace(/\\/g, '/'),
             },
         })
-
         console.log(Details)
         return res.status(200).json({ success: true, Data })
     } catch (error) {
@@ -359,26 +372,70 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
 
 })
 
+
+//Update personal details
+router.post('/student_update_data', checktoken, upload, async (req, res) => {
+
+    const id = req.body._id;
+
+    const Details = {
+        name: req.body.name,
+        email: req.body.email,
+        father_name: req.body.father_name,
+        roll_no: req.body.roll_no,
+        date_of_admission: req.body.date_of_admission,
+        //student_photo: req.body.student_photo
+    }
+   
+    
+    try {
+        if (req.file !== undefined) {
+            student_photo = req.file.path
+        }
+        const { name, email } = req.body
+        if (!name || !email) {
+            return res.status(400).json({ error: 'Please Filled The Data' })
+        }
+        const Data = await Student.updateOne({ _id: id }, {
+            $set: {
+                name: req.body.name,
+                email: req.body.email,
+                father_name: req.body.father_name,
+                roll_no: req.body.roll_no,
+                date_of_admission: req.body.date_of_admission,
+                //student_photo: "http://localhost:3000/" + req.file.path.replace(/\\/g, '/'),
+            },
+        })
+        console.log(Details)
+        return res.status(200).json({ success: true, Data })
+    } catch (error) {
+        return res.status(500).json({ success: false, error })
+
+    }
+
+})
+
+
 //get student personal details
-router.get("/student/details/:_id", checktoken ,async(req,res)=>{
-    const _id=req.params._id
-    try{
-        const detail = await Student.findById({_id})
-        return res.status(200).json({success:true, data:detail})
-    }catch(err){
-        return res.status(401).json({success:false, msg:err.message})
+router.get("/student/details/:_id", checktoken, async (req, res) => {
+    const _id = req.params._id
+    try {
+        const detail = await Student.findById({ _id })
+        return res.status(200).json({ success: true, data: detail })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
     }
 })
 
 
 //Profile picture Api
-router.get("/profile",checktoken ,async(req,res)=>{
+router.get("/profile", checktoken, async (req, res) => {
     const _id = req.user._id
-    try{
-        const data = await Student.findById({_id}).select(['student_photo','name','mobile_number'])
-        return res.status(200).json({success:true, data:data})
-    }catch(err){
-        return res.status(401).json({success:false, msg:err.message})
+    try {
+        const data = await Student.findById({ _id }).select(['student_photo', 'name', 'mobile_number'])
+        return res.status(200).json({ success: true, data: data })
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
     }
 })
 
@@ -439,13 +496,13 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 router.get("/contact_us/:_id", checktoken, async (req, res) => {
     const _id = req.params._id;
     try {
-        const adminData = await Admin.findById({_id})
+        const adminData = await Admin.findById({ _id })
         var result = {
-        mobile_number:adminData.mobile_number,
-        email:adminData.email,
-        first_name:adminData.first_name,
-        last_name:adminData.last_name,
-        //address:userData.address
+            mobile_number: adminData.mobile_number,
+            email: adminData.email,
+            first_name: adminData.first_name,
+            last_name: adminData.last_name,
+            //address:userData.address
         };
         return res.status(200).json({ success: true, result })
     } catch (err) {
@@ -825,7 +882,7 @@ router.post("/questionset/list", checktoken, async (req, res) => {
 
 //GetScore API for one set
 router.post("/quiz/getscore", async (req, res) => {
-    const {student_id, qset}  = req.body
+    const { student_id, qset } = req.body
     try {
         const score = await quizresult.find({ student_id, qset })
         var quiz_completion = []
@@ -833,8 +890,8 @@ router.post("/quiz/getscore", async (req, res) => {
             const pers = (parseInt(value.total_question) * 100) / parseInt(value.total_question);
             //console.log(pers)
             var completion = pers;
-            const marks = (parseInt(value.correct)*5);
-            var total_obtain_marks =marks;
+            const marks = (parseInt(value.correct) * 5);
+            var total_obtain_marks = marks;
             const Score = {
                 student_id: value.student_id,
                 qset: value.qset,
@@ -843,8 +900,8 @@ router.post("/quiz/getscore", async (req, res) => {
                 correct: value.correct,
                 wrong: value.wrong,
                 total_question: value.total_question,
-                total_obtain_marks:total_obtain_marks,
-                completion: completion+"%"
+                total_obtain_marks: total_obtain_marks,
+                completion: completion + "%"
             }
             quiz_completion.push(Score)
         }
@@ -881,10 +938,10 @@ router.post('/chapter/topic', checktoken, async (req, res) => {
         const Allchapter = await Chapter.find({ subject_id });
 
         for (const [_, value] of Object.entries(Allchapter)) {
-            const topicdata = await Topic.find({ chapter_id: value._id ,subject_id:subject_id , status: "active"});
-            
-        var resulttopicArr = [];
-            if(topicdata){
+            const topicdata = await Topic.find({ chapter_id: value._id, subject_id: subject_id, status: "active" });
+
+            var resulttopicArr = [];
+            if (topicdata) {
                 for (const [_, tvalue] of Object.entries(topicdata)) {
                     var topic = {
                         topic_id: tvalue._id,
