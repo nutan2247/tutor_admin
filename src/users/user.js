@@ -456,10 +456,10 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 
 
 //contact us api
-router.get("/contact_us/:_id", checktoken, async (req, res) => {
-    const _id = req.params._id;
+router.get("/contact_us", checktoken, async (req, res) => {
+    //const _id = req.params._id;
     try {
-        const adminData = await Admin.findById({ _id })
+        const adminData = await Admin.findOne({status:'active'})
         var result = {
             mobile_number: adminData.mobile_number,
             email: adminData.email,
