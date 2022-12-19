@@ -459,7 +459,7 @@ router.post('/student_objectid', checktoken, async (req, res) => {
 router.get('/student_subject', checktoken, async (req, res) => {
     try {
 
-        const subj = await Subject.find()
+        const subj = await Subject.find({status:'active'})
         res.status(200).json({ success: true, subj })
 
 
