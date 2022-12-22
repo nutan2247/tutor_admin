@@ -5,7 +5,8 @@ const NotifySchema = mongoose.Schema({
             notification_for: {type:String, required:true},
             sent_on: {type:String, required:true},
             status: {type:String, required:true},
-            createdAt: {type: Date, default: Date.now} ,
+            is_seen: {type:Boolean, default:false},
+            createdAt: {type: Date, default: Date.now},
             updatedAt: {type: Date, default: Date.now} 
         
         })
