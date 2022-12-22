@@ -7,12 +7,13 @@ const checkToken = require('../middleware/check-token');
 //Create notification
 router.post('/notification/add',checkToken, async (req, res) => {
     try {
-        const data =await new Notification({
+        const data = new Notification({
             notification_title: req.body.notification_title,
             notification_description: req.body.notification_description,
             notification_for: req.body.notification_for,
             sent_on: req.body.sent_on,
             status: req.body.status,
+            is_seen: req.body.is_seen,
             addedat: new Date()
         })
         data

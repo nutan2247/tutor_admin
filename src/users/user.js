@@ -330,7 +330,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                student_photo: "http://18.217.204.81:3000/" + req.file.path.replace(/\\/g, '/'),
+                student_photo: "http://3.142.150.11:3000/" + req.file.path.replace(/\\/g, '/'),
             },
         })
         console.log(Details)
@@ -437,7 +437,31 @@ router.get('/student_subject', checktoken, async (req, res) => {
 router.get("/notification", checktoken, async (req, res) => {
     try {
         const Notify = await Notification.find()
-        res.status(200).json({ success: true, Notify })
+        res.status(200).json({ success: true, count:Notify.length, Notify })
+    } catch (err) {
+        res.status(401).json({ success: false, message: err.message })
+    }
+})
+
+
+//notification count api
+router.post("/notification/counter", checktoken, async (req, res) => {
+    const class_id=req.body.class_id
+    try {
+        const result = await Notification.find({notification_for:class_id, status:"active"},{is_seen:false})
+        res.status(200).json({ success: true, count:result.length })
+    } catch (err) {
+        res.status(401).json({ success: false, message: err.message })
+    }
+})
+
+
+// notification update api
+router.post("/notification/seen", checktoken, async (req, res) => {
+    const _id=req.body._id
+    try {
+        const result = await Notification.findByIdAndUpdate({_id},{is_seen:true})
+        res.status(200).json({ success: true, count:result.length, data:result })
     } catch (err) {
         res.status(401).json({ success: false, message: err.message })
     }
