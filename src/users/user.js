@@ -23,6 +23,7 @@ const question = require('../admin/models/question');
 const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
 const PaymentLog = require("../admin/models/paymentLog")
+const Payment = require("../admin/models/payment")
 const Topic = require("../admin/models/topic")
 const Admin = require("../admin/models/admin")
 
@@ -615,10 +616,10 @@ router.get("/news", async (req, res) => {
 })
 
 //Payment History Api
-router.post("/payment/history", async (req, res) => {
-    const payment_id = req.body.payment_id
+router.get("/payment/history/:_id", async (req, res) => {
+    const student_id = req.params
     try {
-        const payment = await PaymentLog.find({ payment_id })
+        const payment = await Payment.find({ student_id })
         return res.status(200).json({ success: true, data: payment })
     } catch (err) {
         return res.status(401).json({ success: false, msg: err.message })
