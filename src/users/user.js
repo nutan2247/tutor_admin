@@ -834,7 +834,7 @@ router.post("/topic", checktoken, async (req, res) => {
 router.post("/questionset/list", checktoken, async (req, res) => {
     const { class_id, subject_id } = req.body
     try {
-        const questionet = await questionSet.find({ class_id, subject_id, status: "active" })
+        const questionet = await questionSet.find({ class_id, subject_id, qps_status: "active" })
             .select(['qps_title', 'qps_language', 'qps_time', 'qps_mark', 'no_of_ques'])
         return res.status(200).json({ success: true, data: questionet })
     } catch (err) {
