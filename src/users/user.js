@@ -330,7 +330,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
                 father_name: req.body.father_name,
                 roll_no: req.body.roll_no,
                 date_of_admission: req.body.date_of_admission,
-                student_photo: "http://3.142.150.11:3000/" + req.file.path.replace(/\\/g, '/'),
+                student_photo: "http://3.140.242.2:3000/" + req.file.path.replace(/\\/g, '/'),
             },
         })
         console.log(Details)
