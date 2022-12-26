@@ -2,24 +2,43 @@ const express = require("express")
 const mongoose = require("mongoose")
 const router = express.Router()
 const Notification = require("../models/notify")
+const NotificationLog = require("../models/notify-log")
 const checkToken = require('../middleware/check-token');
+const Student = require("../models/student")
 
 //Create notification
 router.post('/notification/add',checkToken, async (req, res) => {
+     const class_id = req.body.class_id
     try {
-        const data = new Notification({
-            notification_title: req.body.notification_title,
-            notification_description: req.body.notification_description,
-            notification_for: req.body.notification_for,
-            sent_on: req.body.sent_on,
-            status: req.body.status,
-            is_seen: req.body.is_seen,
-            addedat: new Date()
-        })
-        data
-            .save()
-            .then(result => {
-                res.status(200).json({
+         const studentList =await Student.find({class_id, status:'active'}).select('_id');
+         //for (const [_, value] of Object.entries(studentList)) {
+
+         const data = new Notification({
+             notification_title: req.body.notification_title,
+             notification_description: req.body.notification_description,
+             //student_id:value._id,
+             class_id: req.body.class_id,
+             sent_on: req.body.sent_on,
+             status: req.body.status,
+             addedat: new Date()
+            })
+            data.save().then(result => {
+                for (const [_, value] of Object.entries(studentList)) {
+                    const dataLog = new NotificationLog({
+                        notify_id : result._id,
+                        student_id   : value._id
+                    });
+                    dataLog.save();
+                    if(dataLog){
+                    var noti =Student.findOneAndUpdate({_id:value._id},{$inc:{notification_count:1}},
+                        function(err,res){
+                            console.log(err)
+                        });
+                    }
+                    
+                }
+      
+              return res.status(200).json({
                     success: true,
                     message: 'data stored!'
                 });
@@ -30,7 +49,7 @@ router.post('/notification/add',checkToken, async (req, res) => {
                     error: err
                 });
             })
-    }
+    }//}
     catch (error) {
         res.status(500).json({ success: false, message: error.message })
     }

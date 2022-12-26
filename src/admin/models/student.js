@@ -73,6 +73,10 @@ const studentSchema = mongoose.Schema({
         type: Number,
         required: true
     },
+    notification_count: {
+        type: Number,
+        default:0
+    },
     session: {
         type: String,
         required: true

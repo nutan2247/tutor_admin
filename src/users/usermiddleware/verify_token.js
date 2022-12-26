@@ -11,7 +11,7 @@ const checktoken = function (req, res, next){
                  return res.status(401).json({ msg: 'Token is not valid' });
              } else {
                  req.user = decoded.payload.user;
-                //  console.log(decoded.payload.user)
+                 console.log(decoded.payload.user)
                  next();
              }
          })
