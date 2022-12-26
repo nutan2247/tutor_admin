@@ -28,7 +28,7 @@ router.get('/student/list', auth, async (req, res) => {
 router.post('/student/add', auth, async (req, res) => {
     try {
         const data = new student({
-            _id: new mongoose.Types.ObjectId,
+            //_id: new mongoose.Types.ObjectId,
             board: req.body.board,
             admin_id: req.body.admin_id,
             class_id: req.body.class_id,
@@ -47,6 +47,7 @@ router.post('/student/add', auth, async (req, res) => {
             fee_amount: req.body.fee_amount,
             payment_mode: req.body.payment_mode,
             roll_no: req.body.roll_no,
+            notification_count: req.body.notification_count,
             session: req.body.session,
             exam_seating: req.body.exam_seating,
             login_code: req.body.login_code,
@@ -55,6 +56,7 @@ router.post('/student/add', auth, async (req, res) => {
             modified_at: req.body.modified_at,
             student_photo: req.body.student_photo
         })
+       
         data
             .save()
             .then(result => {

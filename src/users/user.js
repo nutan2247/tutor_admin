@@ -6,6 +6,7 @@ const otpGenerator = require('otp-generator')
 const User = require('../models/user');
 const router = express.Router();
 const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Student = require("../admin/models/student")
@@ -26,6 +27,7 @@ const PaymentLog = require("../admin/models/paymentLog")
 const Payment = require("../admin/models/payment")
 const Topic = require("../admin/models/topic")
 const Admin = require("../admin/models/admin")
+const NotificationLog = require('../admin/models/notify-log')
 
 
 const quiz = require("../models/quizresult")
@@ -444,12 +446,25 @@ router.get("/notification", checktoken, async (req, res) => {
 })
 
 
-//notification count api
-router.post("/notification/counter", checktoken, async (req, res) => {
-    const class_id=req.body.class_id
+//notification list api
+router.get("/notification/listing", checktoken, async (req, res) => {
+    const student_id = req.body._id
+    // let _id =req.body.notify_id;
     try {
-        const result = await Notification.find({notification_for:class_id, status:"active"},{is_seen:false})
-        res.status(200).json({ success: true, count:result.length })
+        var logResult = await NotificationLog.find({ student_id:student_id });
+        var resultArr = [];
+        for (const [_, value] of Object.entries(logResult)) {
+            var notification = '';
+            notification = await Notification.findOne({ _id : value.notify_id });
+          
+            var data ={
+                title: notification.notification_title,
+                description: notification.notification_description,
+                date: notification.updatedAt
+            };
+            resultArr.push(data);
+        }
+        res.status(200).json({ success: true, count:resultArr.length, data:resultArr})
     } catch (err) {
         res.status(401).json({ success: false, message: err.message })
     }
@@ -458,13 +473,25 @@ router.post("/notification/counter", checktoken, async (req, res) => {
 
 // notification update api
 router.post("/notification/seen", checktoken, async (req, res) => {
-    const _id=req.body._id
-    try {
-        const result = await Notification.findByIdAndUpdate({_id},{is_seen:true})
-        res.status(200).json({ success: true, count:result.length, data:result })
-    } catch (err) {
-        res.status(401).json({ success: false, message: err.message })
+    // const _id = req.body._id; /** log table unique id */
+    const student_id = req.body.student_id; 
+        const check = await NotificationLog.find({ student_id });
+    // if(check === '' || check === null){
+    //     return res.status(401).json({ success: false, message: 'Wrong Id!' })
+    // }
+    
+    const result = await NotificationLog.findOneAndUpdate({student_id},{ is_seen : true });
+    if(result){
+        //update query of user table (++ -- )
+        const getnoti = await Student.findById({_id:student_id});
+        if(getnoti.notification_count > 0){
+            // const newCount = getnoti.notification_count - 1;
+            const getnoti = await Student.updateOne({_id:student_id},{ notification_count:0 });
+        }
+
+       return res.status(200).json({ success: true, data:result })
     }
+    return res.status(401).json({success:false, msg:'error'})
 })
 
 
