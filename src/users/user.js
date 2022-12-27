@@ -688,101 +688,95 @@ router.post("/quizresult", async (req, res) => {
     }
 })
 
-async function addresult(data) {
-    var count_correct = 0;
-    var count_incorrect = 0;
-    var attempt = 0;
+// async function addresult(data) {
+//     var count_correct = 0;
+//     var count_incorrect = 0;
+//     var attempt = 0;
 
-    if (data.correct_ans == data.answer) {
-        count_correct = 1;
-    }
-    if (data.correct_ans != data.answer) {
-        count_incorrect = 1;
-    }
-    attempt = count_correct + count_incorrect;
+//     if (data.correct_ans == data.answer) {
+//         count_correct = 1;
+//     }
+//     if (data.correct_ans != data.answer) {
+//         count_incorrect = 1;
+//     }
+//     attempt = count_correct + count_incorrect;
 
-    const neres = new quizresult({
-        student_id: data.student_id,
-        qset: data.qset,
-        class_id: data.class_id,
-        subject: data.subject,
-        total_question: attempt,
-        wrong: count_incorrect,
-        correct: count_correct
-    })
-    const qr = neres.save();
-    //console.log(qr)
-    return qr;
-}
+//     const neres = new quizresult({
+//         student_id: data.student_id,
+//         qset: data.qset,
+//         class_id: data.class_id,
+//         subject: data.subject,
+//         total_question: attempt,
+//         wrong: count_incorrect,
+//         correct: count_correct
+//     })
+//     const qr = neres.save();
+//     //console.log(qr)
+//     return qr;
+// }
 
-async function updateresult(data, storedRes) {
-    var count_correct = storedRes.correct;
-    var count_incorrect = storedRes.wrong;
-    var attempt = storedRes.attempt;
+// async function updateresult(data, storedRes) {
+//     var count_correct = storedRes.correct;
+//     var count_incorrect = storedRes.wrong;
+//     var attempt = storedRes.attempt;
 
-    if (data.correct_ans == data.answer) {
-        count_correct = 1 + count_correct;
-    }
-    if (data.correct_ans != data.answer) {
-        count_incorrect = 1 + count_incorrect;
-    }
-    attempt = count_correct + count_incorrect;
+//     if (data.correct_ans == data.answer) {
+//         count_correct = 1 + count_correct;
+//     }
+//     if (data.correct_ans != data.answer) {
+//         count_incorrect = 1 + count_incorrect;
+//     }
+//     attempt = count_correct + count_incorrect;
 
-    const check1 = await quizresult.updateOne({ qset: data.qset }, {
-        $set: {
-            student_id: data.student_id,
-            qset: data.qset,
-            class_id: data.class_id,
-            subject: data.subject,
-            total_question: attempt,
-            wrong: count_incorrect,
-            correct: count_correct
-        }
-    })
-    //console.log(check1)  
-    return check1;
-}
+//     const check1 = await quizresult.updateOne({ qset: data.qset }, {
+//         $set: {
+//             student_id: data.student_id,
+//             qset: data.qset,
+//             class_id: data.class_id,
+//             subject: data.subject,
+//             total_question: attempt,
+//             wrong: count_incorrect,
+//             correct: count_correct
+//         }
+//     })
+//     //console.log(check1)  
+//     return check1;
+// }
 
-async function addlog(data, resid) {
-    const log = new resultlog({
-        result_id: data.result_id,
-        student_id: data.student_id,
-        qset: data.qset,
-        class_id: data.class_id,
-        subject: data.subject,
-        ques_no: data.ques_no,
-        answer: data.answer,
-        correct_ans: data.correct_ans,
-    })
-    const lr = await log.save();
-    //console.log(lr)
-    return lr;
-}
+// async function addlog(data, resid) {
+//     const log = new resultlog({
+//         result_id: data.result_id,
+//         student_id: data.student_id,
+//         qset: data.qset,
+//         class_id: data.class_id,
+//         subject: data.subject,
+//         ques_no: data.ques_no,
+//         answer: data.answer,
+//         correct_ans: data.correct_ans,
+//     })
+//     const lr = await log.save();
+//     //console.log(lr)
+//     return lr;
+// }
 //Create quiz log
-router.post("/quizlog/add", async (req, res) => {
+router.post("/quizresult/add", async (req, res) => {
 
     try {
-        const check = await quizresult.findOne({ qset: req.body.qset })
-        //console.log(check)
-        var quizres = '';
-        if (check) {
-            const ur = updateresult(req.body, check)
-            //console.log(ur)
-            if (ur) {
-                //console.log(ur)
-
-                addlog(req.body, check._id);
-                quizres = 'data updated';
-            }
-        } else {
-            const isresult = addresult(req.body);
-            //console.log(isresult)
-            if (isresult) {
-                addlog(req.body, isresult._id);
-                quizres = 'data added';
-            }
-        }
-        return res.status(200).json({ success: true, msg: quizres })
+        const check = new quizresult({
+                    student_id: req.body.student_id,
+                    qset: req.body.qset,
+                    class_id: req.body.class_id,
+                    subject: req.body.subject,
+                    total_question:req.body.total_question,
+                    wrong: req.body.wrong,
+                    correct: req.body.correct,
+                    skip:req.body.skip,
+                    percentage:req.body.percentage,
+                    grade:req.body.grade,
+                    status:req.body.status
+                })
+                check.save()
+        return res.status(200).json({ success: true, msg: check })
     } catch (err) {
         res.status(401).json({ success: false, msg: err.message })
     }
@@ -830,12 +824,12 @@ router.get("/quiz/score/:_id", async (req, res) => {
         for (const [_, value] of Object.entries(result)) {
             const pers = (parseInt(value.correct) * 100) / parseInt(value.total_question);
             var grade = gradeSystem(pers);
-            console.log(grade, pers);
+            // console.log(grade, pers);
             const Score = {
                 student_id: value.student_id,
                 qset: value.qset,
                 class: value.class,
-                subject: value.subject,
+                subject: value.subject, 
                 duration: value.duration,
                 correct: value.correct,
                 wrong: value.wrong,
