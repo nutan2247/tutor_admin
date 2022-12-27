@@ -28,6 +28,18 @@ const QuizSchema = mongoose.Schema({
         type:Number,
         required:true
     },
+    skip:{
+        type:Number,
+        required:true
+    },
+    percentage:{
+        type:Number,
+        required:true
+    },
+    grade:{
+        type:String,
+        required:true
+    },
     createdAt:{
         type:Date,
         default:Date.now()

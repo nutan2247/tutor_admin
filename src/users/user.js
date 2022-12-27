@@ -6,7 +6,6 @@ const otpGenerator = require('otp-generator')
 const User = require('../models/user');
 const router = express.Router();
 const mongoose = require('mongoose');
-const ObjectId = mongoose.Types.ObjectId
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Student = require("../admin/models/student")
@@ -17,13 +16,11 @@ const Class = require('../admin/models/class')
 const upload = require('../models/uploadimage')
 const Notification = require("../admin/models/notify")
 const checkBox = require("../admin/models/SubjectCheckbox")
-const ContactUs = require("../admin/models/contactus")
 const Chapter = require('../admin/models/chapter');
 const questionSet = require('../admin/models/questionSetPaper');
 const question = require('../admin/models/question');
 const Banner = require("../admin/models/banner")
 const Notice = require("../admin/models/noticeBoard")
-const PaymentLog = require("../admin/models/paymentLog")
 const Payment = require("../admin/models/payment")
 const Topic = require("../admin/models/topic")
 const Admin = require("../admin/models/admin")
@@ -33,7 +30,6 @@ const NotificationLog = require('../admin/models/notify-log')
 const quiz = require("../models/quizresult")
 const resultlog = require("../models/resultlog");
 const quizresult = require('../models/quizresult');
-const postQuizdata = require("../models/postquizdata")
 
 const multer = require('multer')
 const path = require('path');
@@ -194,7 +190,7 @@ router.get('/userList', (req, res, next) => {
 });
 
 
-//LOGIN
+//testing Api
 router.post('/signin', async (req, res) => {
     const mobile_number = req.body.mobile_number
     try {
@@ -345,7 +341,7 @@ router.post('/student_update', checktoken, upload, async (req, res) => {
 })
 
 
-//Update personal details
+//Update personal details without Image
 router.post('/student_update_data', checktoken, async (req, res) => {
 
     const id = req.body._id;
@@ -439,7 +435,7 @@ router.get('/student_subject', checktoken, async (req, res) => {
 router.get("/notification", checktoken, async (req, res) => {
     try {
         const Notify = await Notification.find()
-        res.status(200).json({ success: true, count:Notify.length, Notify })
+        res.status(200).json({ success: true, count: Notify.length, Notify })
     } catch (err) {
         res.status(401).json({ success: false, message: err.message })
     }
@@ -451,20 +447,20 @@ router.get("/notification/listing", checktoken, async (req, res) => {
     const student_id = req.body._id
     // let _id =req.body.notify_id;
     try {
-        var logResult = await NotificationLog.find({ student_id:student_id });
+        var logResult = await NotificationLog.find({ student_id: student_id });
         var resultArr = [];
         for (const [_, value] of Object.entries(logResult)) {
             var notification = '';
-            notification = await Notification.findOne({ _id : value.notify_id });
-          
-            var data ={
+            notification = await Notification.findOne({ _id: value.notify_id });
+
+            var data = {
                 title: notification.notification_title,
                 description: notification.notification_description,
                 date: notification.updatedAt
             };
             resultArr.push(data);
         }
-        res.status(200).json({ success: true, count:resultArr.length, data:resultArr})
+        res.status(200).json({ success: true, count: resultArr.length, data: resultArr })
     } catch (err) {
         res.status(401).json({ success: false, message: err.message })
     }
@@ -474,24 +470,24 @@ router.get("/notification/listing", checktoken, async (req, res) => {
 // notification update api
 router.post("/notification/seen", checktoken, async (req, res) => {
     // const _id = req.body._id; /** log table unique id */
-    const student_id = req.body.student_id; 
-        const check = await NotificationLog.find({ student_id });
+    const student_id = req.body.student_id;
+    const check = await NotificationLog.find({ student_id });
     // if(check === '' || check === null){
     //     return res.status(401).json({ success: false, message: 'Wrong Id!' })
     // }
-    
-    const result = await NotificationLog.findOneAndUpdate({student_id},{ is_seen : true });
-    if(result){
+
+    const result = await NotificationLog.findOneAndUpdate({ student_id }, { is_seen: true });
+    if (result) {
         //update query of user table (++ -- )
-        const getnoti = await Student.findById({_id:student_id});
-        if(getnoti.notification_count > 0){
+        const getnoti = await Student.findById({ _id: student_id });
+        if (getnoti.notification_count > 0) {
             // const newCount = getnoti.notification_count - 1;
-            const getnoti = await Student.updateOne({_id:student_id},{ notification_count:0 });
+            const getnoti = await Student.updateOne({ _id: student_id }, { notification_count: 0 });
         }
 
-       return res.status(200).json({ success: true, data:result })
+        return res.status(200).json({ success: true, data: result })
     }
-    return res.status(401).json({success:false, msg:'error'})
+    return res.status(401).json({ success: false, msg: 'error' })
 })
 
 
@@ -511,13 +507,12 @@ router.post("/subject_checkbox", checktoken, async (req, res) => {
 router.get("/contact_us", checktoken, async (req, res) => {
     //const _id = req.params._id;
     try {
-        const adminData = await Admin.findOne({status:'active'})
+        const adminData = await Admin.findOne({ status: 'active' })
         var result = {
             mobile_number: adminData.mobile_number,
             email: adminData.email,
             first_name: adminData.first_name,
             last_name: adminData.last_name,
-            //address:userData.address
         };
         return res.status(200).json({ success: true, result })
     } catch (err) {
@@ -624,6 +619,7 @@ router.post('/student/class', checktoken, async (req, res) => {
 })
 
 
+//student subject list or one subject
 router.post('/student/subject', checktoken, async (req, res) => {
     const class_id = req.body.class_id
     try {
@@ -646,6 +642,7 @@ router.post('/student/subject', checktoken, async (req, res) => {
     }
 })
 
+
 //Banner Api
 router.get("/banner", async (req, res) => {
     try {
@@ -656,6 +653,7 @@ router.get("/banner", async (req, res) => {
     }
 })
 
+
 //News Api
 router.get("/news", async (req, res) => {
     try {
@@ -665,6 +663,7 @@ router.get("/news", async (req, res) => {
         return res.status(400).json({ success: false, msg: err.message })
     }
 })
+
 
 //Payment History Api
 router.get("/payment/history/:_id", async (req, res) => {
@@ -677,7 +676,8 @@ router.get("/payment/history/:_id", async (req, res) => {
     }
 })
 
-// //quiz result Api
+
+//quiz result Api
 router.post("/quizresult", async (req, res) => {
     const ques_no = req.body.ques_no
     try {
@@ -688,119 +688,31 @@ router.post("/quizresult", async (req, res) => {
     }
 })
 
-async function addresult(data) {
-    var count_correct = 0;
-    var count_incorrect = 0;
-    var attempt = 0;
 
-    if (data.correct_ans == data.answer) {
-        count_correct = 1;
-    }
-    if (data.correct_ans != data.answer) {
-        count_incorrect = 1;
-    }
-    attempt = count_correct + count_incorrect;
-
-    const neres = new quizresult({
-        student_id: data.student_id,
-        qset: data.qset,
-        class_id: data.class_id,
-        subject: data.subject,
-        total_question: attempt,
-        wrong: count_incorrect,
-        correct: count_correct
-    })
-    const qr = neres.save();
-    //console.log(qr)
-    return qr;
-}
-
-async function updateresult(data, storedRes) {
-    var count_correct = storedRes.correct;
-    var count_incorrect = storedRes.wrong;
-    var attempt = storedRes.attempt;
-
-    if (data.correct_ans == data.answer) {
-        count_correct = 1 + count_correct;
-    }
-    if (data.correct_ans != data.answer) {
-        count_incorrect = 1 + count_incorrect;
-    }
-    attempt = count_correct + count_incorrect;
-
-    const check1 = await quizresult.updateOne({ qset: data.qset }, {
-        $set: {
-            student_id: data.student_id,
-            qset: data.qset,
-            class_id: data.class_id,
-            subject: data.subject,
-            total_question: attempt,
-            wrong: count_incorrect,
-            correct: count_correct
-        }
-    })
-    //console.log(check1)  
-    return check1;
-}
-
-async function addlog(data, resid) {
-    const log = new resultlog({
-        result_id: data.result_id,
-        student_id: data.student_id,
-        qset: data.qset,
-        class_id: data.class_id,
-        subject: data.subject,
-        ques_no: data.ques_no,
-        answer: data.answer,
-        correct_ans: data.correct_ans,
-    })
-    const lr = await log.save();
-    //console.log(lr)
-    return lr;
-}
-//Create quiz log
-router.post("/quizlog/add", async (req, res) => {
+//Create quiz result
+router.post("/quizresult/add", async (req, res) => {
 
     try {
-        const check = await quizresult.findOne({ qset: req.body.qset })
-        //console.log(check)
-        var quizres = '';
-        if (check) {
-            const ur = updateresult(req.body, check)
-            //console.log(ur)
-            if (ur) {
-                //console.log(ur)
-
-                addlog(req.body, check._id);
-                quizres = 'data updated';
-            }
-        } else {
-            const isresult = addresult(req.body);
-            //console.log(isresult)
-            if (isresult) {
-                addlog(req.body, isresult._id);
-                quizres = 'data added';
-            }
-        }
-        return res.status(200).json({ success: true, msg: quizres })
+        const check = new quizresult({
+            student_id: req.body.student_id,
+            qset: req.body.qset,
+            class_id: req.body.class_id,
+            subject: req.body.subject,
+            total_question: req.body.total_question,
+            wrong: req.body.wrong,
+            correct: req.body.correct,
+            skip: req.body.skip,
+            percentage: req.body.percentage,
+            grade: req.body.grade,
+            status: req.body.status
+        })
+        check.save()
+        return res.status(200).json({ success: true, msg: check })
     } catch (err) {
         res.status(401).json({ success: false, msg: err.message })
     }
 })
 
-
-
-//quiz log Api
-router.post("/quizlog", async (req, res) => {
-    const { student_id, admin_id, subject } = req.body
-
-    try {
-        const result = await resultlog.find({ student_id, admin_id, subject })
-        return res.status(200).json({ success: true, data: result })
-    } catch (err) {
-        return res.status(401).json({ success: false, msg: err.message })
-    }
-})
 
 function gradeSystem(scoreP) {
     var grade = '';
@@ -820,6 +732,7 @@ function gradeSystem(scoreP) {
     return grade;
 }
 
+
 //quiz score Api
 router.get("/quiz/score/:_id", async (req, res) => {
     var msg = "";
@@ -830,7 +743,7 @@ router.get("/quiz/score/:_id", async (req, res) => {
         for (const [_, value] of Object.entries(result)) {
             const pers = (parseInt(value.correct) * 100) / parseInt(value.total_question);
             var grade = gradeSystem(pers);
-            console.log(grade, pers);
+            // console.log(grade, pers);
             const Score = {
                 student_id: value.student_id,
                 qset: value.qset,
@@ -852,23 +765,7 @@ router.get("/quiz/score/:_id", async (req, res) => {
 })
 
 
-//post quiz data Api
-router.post('/quiz/data', async (req, res) => {
-    try {
-        const data = new postQuizdata({
-            correct_answer: req.body.correct_answer,
-            wrong_answer: req.body.wrong_answer,
-            question: req.body.question,
-            duration: req.body.duration
-        })
-        const finaldata = await data.save()
-        return res.status(200).json({ success: true, msg: 'your data submit successfully' })
-    } catch (err) {
-        return res.status(401).json({ success: false, msg: err.message })
-    }
-})
-
-
+//topic api
 router.post("/topic", checktoken, async (req, res) => {
     const class_id = req.body.class
     try {
@@ -927,8 +824,8 @@ router.post("/quiz/getscore", async (req, res) => {
 })
 
 
-/** get subject by class start */
 
+/** get subject by class start */
 router.get('/student/subjects/:class_id', checktoken, async (req, res) => {
     const class_id = req.params.class_id
     try {
@@ -944,8 +841,8 @@ router.get('/student/subjects/:class_id', checktoken, async (req, res) => {
 
 
 
-/**chapter topic get by subject_id start */
 
+/**chapter topic get by subject_id start */
 router.post('/chapter/topic', checktoken, async (req, res) => {
     const subject_id = req.body.subject_id
     try {
