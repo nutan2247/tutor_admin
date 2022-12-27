@@ -12,7 +12,7 @@ const QuizSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    subject:{
+    subject_id:{
         type:String,
         required:true
     },
