@@ -697,7 +697,7 @@ router.post("/quizresult/add", async (req, res) => {
             student_id: req.body.student_id,
             qset: req.body.qset,
             class_id: req.body.class_id,
-            subject: req.body.subject,
+            subject_id: req.body.subject_id,
             total_question: req.body.total_question,
             wrong: req.body.wrong,
             correct: req.body.correct,
