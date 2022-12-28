@@ -698,6 +698,7 @@ router.post("/quizresult/add", async (req, res) => {
             qset: req.body.qset,
             class_id: req.body.class_id,
             subject_id: req.body.subject_id,
+            duration:req.body.duration,
             total_question: req.body.total_question,
             wrong: req.body.wrong,
             correct: req.body.correct,
@@ -714,23 +715,23 @@ router.post("/quizresult/add", async (req, res) => {
 })
 
 
-function gradeSystem(scoreP) {
-    var grade = '';
-    if (scoreP < 35) {
-        grade = 'Fail';
-    } else if (scoreP >= 35 && scoreP < 50) {
-        grade = 'Good';
-    } else if (scoreP >= 50 && scoreP < 70) {
-        grade = 'Better';
-    } else if (scoreP >= 70 && scoreP < 90) {
-        grade = 'Best';
-    } else if (scoreP >= 90 && scoreP < 100) {
-        grade = 'Excellent';
-    } else {
-        grade = '';
-    }
-    return grade;
-}
+// function gradeSystem(scoreP) {
+//     var grade = '';
+//     if (scoreP < 35) {
+//         grade = 'Fail';
+//     } else if (scoreP >= 35 && scoreP < 50) {
+//         grade = 'Good';
+//     } else if (scoreP >= 50 && scoreP < 70) {
+//         grade = 'Better';
+//     } else if (scoreP >= 70 && scoreP < 90) {
+//         grade = 'Best';
+//     } else if (scoreP >= 90 && scoreP < 100) {
+//         grade = 'Excellent';
+//     } else {
+//         grade = '';
+//     }
+//     return grade;
+// }
 
 
 //quiz score Api
@@ -741,21 +742,26 @@ router.get("/quiz/score/:_id", async (req, res) => {
         const result = await quiz.find({ student_id: id });
         const totalscore = []
         for (const [_, value] of Object.entries(result)) {
-            const pers = (parseInt(value.correct) * 100) / parseInt(value.total_question);
-            var grade = gradeSystem(pers);
+            const subname = await Subject.findOne({_id:value.subject_id})
+            // console.log(subname)
+            
+            //const pers = (parseInt(value.correct) * 100) / parseInt(value.total_question);
+            //var grade = gradeSystem(pers);
             // console.log(grade, pers);
             const Score = {
                 student_id: value.student_id,
                 qset: value.qset,
-                class: value.class,
-                subject: value.subject,
+                class_id: value.class_id,
+                subject_id: value.subject_id,
+                subject_name:subname.name,
                 duration: value.duration,
                 correct: value.correct,
                 wrong: value.wrong,
                 total_question: value.total_question,
-                grade: grade
+                //grade: grade
             }
             totalscore.push(Score)
+            console.log(totalscore)
         }
 
         return res.status(200).json({ success: true, data: totalscore })
