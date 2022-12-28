@@ -755,6 +755,7 @@ router.get("/quiz/score/:_id", async (req, res) => {
                 subject_id: value.subject_id,
                 subject_name:subname.name,
                 duration: value.duration,
+                createdAt: value.createdAt,
                 correct: value.correct,
                 wrong: value.wrong,
                 total_question: value.total_question,
