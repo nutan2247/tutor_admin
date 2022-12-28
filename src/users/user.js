@@ -759,7 +759,7 @@ router.get("/quiz/score/:_id", async (req, res) => {
                 correct: value.correct,
                 wrong: value.wrong,
                 total_question: value.total_question,
-                //grade: grade
+                grade:value.grade
             }
             totalscore.push(Score)
             console.log(totalscore)
