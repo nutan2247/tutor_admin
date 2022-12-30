@@ -282,6 +282,44 @@ router.post('/verify_otp', async (req, res) => {
 })
 
 
+//verify user by password
+router.post('/login/password', async(req,res)=>{
+    const { email, password } = req.body
+    try {
+        const User = await Student.findOne({ email })
+        if (!User) {
+            return res.status(501).json({ success: false, msg: "Invalid Email" })
+        }
+        const passwordMatch = await Student.findOne({password})
+        if (!passwordMatch) {
+            return res.status(501).json({ success: false, msg: "Invalid Password" })
+        }
+        const payload = {
+            admin: {
+                _id: User._id,
+                mobile_number: User.mobile_number,
+                class_id: User.class_id
+            }
+        }
+        jwt.sign({ payload }, process.env.JWT_KEY, { expiresIn: '24h' },
+        (err, token) => {
+            if (err) throw err;
+            res.status(200).json({
+                success: true,
+                message: "Login successfully",
+                token: token,
+            });
+        }
+    );
+    } catch (err) {
+        return res.status(401).json({ success: false, msg: err.message })
+    }
+})
+
+
+
+
+
 //CLASS AND SUBJECT API IN ONE ROUTE
 router.get('/subject_class', checktoken, async (req, res) => {
     try {
