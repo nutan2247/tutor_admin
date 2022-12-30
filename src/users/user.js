@@ -25,6 +25,7 @@ const Payment = require("../admin/models/payment")
 const Topic = require("../admin/models/topic")
 const Admin = require("../admin/models/admin")
 const NotificationLog = require('../admin/models/notify-log')
+const Zoom = require("../admin/models/Zoom_meeting")
 
 
 const quiz = require("../models/quizresult")
@@ -931,6 +932,19 @@ router.post('/chapter/topic', checktoken, async (req, res) => {
     }
 })
 /**chapter topic get by subject_id end*/
+
+
+//Zoom meeting listing
+router.get("/meeting/list", checktoken, async(req,res)=>{
+    try{
+    const zoom = await Zoom.find()
+    return res.status(200).json({success:true, data:zoom})
+    }catch(err){
+        return res.status(401).json({success:false, err:err.message})
+    }
+})
+
+
 
 
 
