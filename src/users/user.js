@@ -296,7 +296,7 @@ router.post('/login/password', async(req,res)=>{
             return res.status(501).json({ success: false, msg: "Invalid Password" })
         }
         const payload = {
-            admin: {
+            user: {
                 _id: User._id,
                 mobile_number: User.mobile_number,
                 class_id: User.class_id
