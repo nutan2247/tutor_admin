@@ -115,7 +115,7 @@ router.get('/subject/list', checkToken, async (req, res) => {
         var resultArr = [];
         const Allsubject = await Subject.find();
         for (const [_, value] of Object.entries(Allsubject)) {
-            const classdata = await Class.find({_id:value.class_id});
+            const classdata = await Class.findOne({_id:value.class_id});
             var subject = {
                 class_id: value.class_id,
                 class_name: classdata.class_name,
