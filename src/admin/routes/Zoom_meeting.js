@@ -29,6 +29,7 @@ router.get("/meeting/list", checktoken, async(req,res)=>{
         for (const [_, value] of Object.entries(zoom)) {
             const classdata = await Class.findOne({_id:value.class_id})
             var zoomdata = {
+                _id:value._id,
                 meeting_id:value.meeting_id,
                 passcode:value.passcode,
                 class_id:value.class_id,
